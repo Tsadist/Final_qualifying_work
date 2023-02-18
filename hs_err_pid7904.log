@@ -1,0 +1,197 @@
+#
+# There is insufficient memory for the Java Runtime Environment to continue.
+# Native memory allocation (mmap) failed to map 134217728 bytes for Failed to commit area from 0x00000000d1200000 to 0x00000000d9200000 of length 134217728.
+# Possible reasons:
+#   The system is out of physical RAM or swap space
+#   The process is running with CompressedOops enabled, and the Java Heap may be blocking the growth of the native heap
+# Possible solutions:
+#   Reduce memory load on the system
+#   Increase physical memory or swap space
+#   Check if swap backing store is full
+#   Decrease Java heap size (-Xmx/-Xms)
+#   Decrease number of Java threads
+#   Decrease Java thread stack sizes (-Xss)
+#   Set larger code cache with -XX:ReservedCodeCacheSize=
+# This output file may be truncated or incomplete.
+#
+#  Out of Memory Error (./src/hotspot/os/windows/os_windows.cpp:3624), pid=7904, tid=15668
+#
+# JRE version:  (11.0.14.1+1) (build )
+# Java VM: OpenJDK 64-Bit Server VM (11.0.14.1+1-b1751.46, mixed mode, sharing, tiered, compressed oops, g1 gc, windows-amd64)
+# No core dump will be written. Minidumps are not enabled by default on client versions of Windows
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -Djava.rmi.server.hostname=127.0.0.1 -Duser.timezone=UTC -Xmx750m -Xms128m -Dfile.encoding=UTF-8 com.intellij.database.remote.RemoteJdbcServer org.postgresql.Driver
+
+Host: Intel(R) Core(TM) i5-1035G1 CPU @ 1.00GHz, 8 cores, 7G,  Windows 11 , 64 bit Build 22000 (10.0.22000.1335)
+Time: Sat Feb 11 17:39:17 2023 RTZ 2 (зима) elapsed time: 0.010799 seconds (0d 0h 0m 0s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x000002e6799ef000):  JavaThread "Unknown thread" [_thread_in_vm, id=15668, stack(0x000000ffe2900000,0x000000ffe2a00000)]
+
+Stack: [0x000000ffe2900000,0x000000ffe2a00000]
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [jvm.dll+0x61601a]
+V  [jvm.dll+0x79c3b0]
+V  [jvm.dll+0x79d9cd]
+V  [jvm.dll+0x79e0a3]
+V  [jvm.dll+0x24ca38]
+V  [jvm.dll+0x613074]
+V  [jvm.dll+0x607d75]
+V  [jvm.dll+0x30b05b]
+V  [jvm.dll+0x30afca]
+V  [jvm.dll+0x30aea2]
+V  [jvm.dll+0x30fde6]
+V  [jvm.dll+0x35b473]
+V  [jvm.dll+0x35bb76]
+V  [jvm.dll+0x35b573]
+V  [jvm.dll+0x2e57b8]
+V  [jvm.dll+0x2e6967]
+V  [jvm.dll+0x779377]
+V  [jvm.dll+0x77ab6c]
+V  [jvm.dll+0x368a19]
+V  [jvm.dll+0x75ce8e]
+V  [jvm.dll+0x3d6aa3]
+V  [jvm.dll+0x3d8ff1]
+C  [jli.dll+0x536b]  JavaMain+0x113  (java.c:414)
+C  [ucrtbase.dll+0x26c0c]
+C  [KERNEL32.DLL+0x155a0]
+C  [ntdll.dll+0x485b]
+
+
+---------------  P R O C E S S  ---------------
+
+Threads class SMR info:
+_java_thread_list=0x000002e679724b90, length=0, elements={
+}
+
+Java Threads: ( => current thread )
+
+Other Threads:
+  0x000002e679a08000 GCTaskThread "GC Thread#0" [stack: 0x000000ffe2a00000,0x000000ffe2b00000] [id=15576]
+  0x000002e679a23000 ConcurrentGCThread "G1 Main Marker" [stack: 0x000000ffe2b00000,0x000000ffe2c00000] [id=22456]
+  0x000002e679a24800 ConcurrentGCThread "G1 Conc#0" [stack: 0x000000ffe2c00000,0x000000ffe2d00000] [id=11648]
+
+[error occurred during error reporting (printing all threads), id 0xc0000005, EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00007ffd64475f37]
+
+VM state:not at safepoint (not fully initialized)
+
+VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
+[0x000002e6799ec810] Heap_lock - owner thread: 0x000002e6799ef000
+
+Heap address: 0x00000000d1200000, size: 750 MB, Compressed Oops mode: Non-zero based: 0x00000000d1200000
+Narrow klass base: 0x0000000000000000, Narrow klass shift: 0
+
+GC Heap History (0 events):
+No events
+
+Deoptimization events (0 events):
+No events
+
+Classes redefined (0 events):
+No events
+
+Internal exceptions (0 events):
+No events
+
+Events (1 events):
+Event: 0.007 Loaded shared library C:\Users\tsadist\.jbr\jbrsdk-11_0_14_1-windows-x64-b1751.46\bin\zip.dll
+
+
+Dynamic libraries:
+0x00007ff7655b0000 - 0x00007ff7655ba000 	C:\Users\tsadist\.jbr\jbrsdk-11_0_14_1-windows-x64-b1751.46\bin\java.exe
+0x00007ffdcb880000 - 0x00007ffdcba89000 	C:\WINDOWS\SYSTEM32\ntdll.dll
+0x00007ffdca8e0000 - 0x00007ffdca99e000 	C:\WINDOWS\System32\KERNEL32.DLL
+0x00007ffdc9000000 - 0x00007ffdc937b000 	C:\WINDOWS\System32\KERNELBASE.dll
+0x00007ffdc8d50000 - 0x00007ffdc8e61000 	C:\WINDOWS\System32\ucrtbase.dll
+0x00007ffdb45b0000 - 0x00007ffdb45c9000 	C:\Users\tsadist\.jbr\jbrsdk-11_0_14_1-windows-x64-b1751.46\bin\jli.dll
+0x00007ffdb4530000 - 0x00007ffdb4546000 	C:\Users\tsadist\.jbr\jbrsdk-11_0_14_1-windows-x64-b1751.46\bin\VCRUNTIME140.dll
+0x00007ffdcaf30000 - 0x00007ffdcb0dd000 	C:\WINDOWS\System32\USER32.dll
+0x00007ffdb0b30000 - 0x00007ffdb0dd5000 	C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.22000.120_none_9d947278b86cc467\COMCTL32.dll
+0x00007ffdc9560000 - 0x00007ffdc9586000 	C:\WINDOWS\System32\win32u.dll
+0x00007ffdca720000 - 0x00007ffdca7c3000 	C:\WINDOWS\System32\msvcrt.dll
+0x00007ffdcaef0000 - 0x00007ffdcaf19000 	C:\WINDOWS\System32\GDI32.dll
+0x00007ffdc8ee0000 - 0x00007ffdc8ff8000 	C:\WINDOWS\System32\gdi32full.dll
+0x00007ffdc9440000 - 0x00007ffdc94dd000 	C:\WINDOWS\System32\msvcp_win.dll
+0x00007ffdc9910000 - 0x00007ffdc9942000 	C:\WINDOWS\System32\IMM32.DLL
+0x00007ffd91380000 - 0x00007ffd9142a000 	C:\Users\tsadist\.jbr\jbrsdk-11_0_14_1-windows-x64-b1751.46\bin\msvcp140.dll
+0x00007ffd64180000 - 0x00007ffd64cfa000 	C:\Users\tsadist\.jbr\jbrsdk-11_0_14_1-windows-x64-b1751.46\bin\server\jvm.dll
+0x00007ffdcb2e0000 - 0x00007ffdcb38e000 	C:\WINDOWS\System32\ADVAPI32.dll
+0x00007ffdca840000 - 0x00007ffdca8de000 	C:\WINDOWS\System32\sechost.dll
+0x00007ffdcb690000 - 0x00007ffdcb7b0000 	C:\WINDOWS\System32\RPCRT4.dll
+0x00007ffdcae80000 - 0x00007ffdcae88000 	C:\WINDOWS\System32\PSAPI.DLL
+0x00007ffdc26c0000 - 0x00007ffdc26f3000 	C:\WINDOWS\SYSTEM32\WINMM.dll
+0x00007ffdc29d0000 - 0x00007ffdc29da000 	C:\WINDOWS\SYSTEM32\VERSION.dll
+0x00007ffdac7e0000 - 0x00007ffdac7e9000 	C:\WINDOWS\SYSTEM32\WSOCK32.dll
+0x00007ffdca9a0000 - 0x00007ffdcaa0f000 	C:\WINDOWS\System32\WS2_32.dll
+0x00007ffdc7d90000 - 0x00007ffdc7da8000 	C:\WINDOWS\SYSTEM32\kernel.appcore.dll
+0x00007ffdc5060000 - 0x00007ffdc5071000 	C:\Users\tsadist\.jbr\jbrsdk-11_0_14_1-windows-x64-b1751.46\bin\verify.dll
+0x00007ffdc67a0000 - 0x00007ffdc69c1000 	C:\WINDOWS\SYSTEM32\DBGHELP.DLL
+0x00007ffdac680000 - 0x00007ffdac6b1000 	C:\WINDOWS\SYSTEM32\dbgcore.DLL
+0x00007ffdc94e0000 - 0x00007ffdc955f000 	C:\WINDOWS\System32\bcryptPrimitives.dll
+0x00007ffdb3b00000 - 0x00007ffdb3b29000 	C:\Users\tsadist\.jbr\jbrsdk-11_0_14_1-windows-x64-b1751.46\bin\java.dll
+0x00007ffdc20a0000 - 0x00007ffdc20ab000 	C:\Users\tsadist\.jbr\jbrsdk-11_0_14_1-windows-x64-b1751.46\bin\jimage.dll
+0x00007ffdc11a0000 - 0x00007ffdc11b9000 	C:\Users\tsadist\.jbr\jbrsdk-11_0_14_1-windows-x64-b1751.46\bin\zip.dll
+
+dbghelp: loaded successfully - version: 4.0.5 - missing functions: none
+symbol engine: initialized successfully - sym options: 0x614 - pdb path: .;C:\Users\tsadist\.jbr\jbrsdk-11_0_14_1-windows-x64-b1751.46\bin;C:\WINDOWS\SYSTEM32;C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.22000.120_none_9d947278b86cc467;C:\Users\tsadist\.jbr\jbrsdk-11_0_14_1-windows-x64-b1751.46\bin\server
+
+VM Arguments:
+jvm_args: -Djava.rmi.server.hostname=127.0.0.1 -Duser.timezone=UTC -Xmx750m -Xms128m -Dfile.encoding=UTF-8 
+java_command: com.intellij.database.remote.RemoteJdbcServer org.postgresql.Driver
+java_class_path (initial): C:\Program Files\JetBrains\IntelliJ IDEA 2021.3\lib\util.jar;C:\Program Files\JetBrains\IntelliJ IDEA 2021.3\lib\org_codehaus_groovy_groovy.jar;C:\Program Files\JetBrains\IntelliJ IDEA 2021.3\plugins\DatabaseTools\lib\jdbc-console.jar;C:\Users\tsadist\AppData\Roaming\JetBrains\IntelliJIdea2021.3\jdbc-drivers\PostgreSQL\42.5.0\org\postgresql\postgresql\42.5.0\postgresql-42.5.0.jar;C:\Users\tsadist\AppData\Roaming\JetBrains\IntelliJIdea2021.3\jdbc-drivers\PostgreSQL\42.5.0\org\checkerframework\checker-qual\3.5.0\checker-qual-3.5.0.jar;C:\Users\tsadist\AppData\Roaming\JetBrains\IntelliJIdea2021.3\jdbc-drivers\PostgreSQL\42.5.0\com\github\waffle\waffle-jna\1.9.1\waffle-jna-1.9.1.jar;C:\Users\tsadist\AppData\Roaming\JetBrains\IntelliJIdea2021.3\jdbc-drivers\PostgreSQL\42.5.0\net\java\dev\jna\jna\4.5.1\jna-4.5.1.jar;C:\Users\tsadist\AppData\Roaming\JetBrains\IntelliJIdea2021.3\jdbc-drivers\PostgreSQL\42.5.0\net\java\dev\jna\jna-platform\4.5.1\jna-platform-4.5.1.jar;C:\Users\tsadist\AppData\Roaming\JetBrains\IntelliJIdea2021.3\jdbc-drivers\PostgreSQL\42.5.0\org\slf4j\jcl-over-slf4j\1.7.25\jcl-over-slf4j-1.7.25.jar;C:\Users\tsadist\AppData\Roaming\JetBrains\IntelliJIdea2021.3\jdbc-drivers\PostgreSQL\42.5.0\org\slf4j\slf4j-api\1.7.25\slf4j-api-1.7.25.jar;C:\Users\tsadist\AppData\Roaming\JetBrains\IntelliJIdea2021.3\jdbc-drivers\PostgreSQL\42.5.0\com\github\ben-manes\caffeine\caffeine\2.6.2\caffeine-2.6.2.jar
+Launcher Type: SUN_STANDARD
+
+[Global flags]
+     intx CICompilerCount                          = 4                                         {product} {ergonomic}
+     uint ConcGCThreads                            = 2                                         {product} {ergonomic}
+     uint G1ConcRefinementThreads                  = 8                                         {product} {ergonomic}
+   size_t G1HeapRegionSize                         = 1048576                                   {product} {ergonomic}
+    uintx GCDrainStackTargetSize                   = 64                                        {product} {ergonomic}
+   size_t InitialHeapSize                          = 134217728                                 {product} {command line}
+   size_t MarkStackSize                            = 4194304                                   {product} {ergonomic}
+   size_t MaxHeapSize                              = 786432000                                 {product} {command line}
+   size_t MinHeapDeltaBytes                        = 1048576                                   {product} {ergonomic}
+    uintx NonNMethodCodeHeapSize                   = 5836300                                {pd product} {ergonomic}
+    uintx NonProfiledCodeHeapSize                  = 122910970                              {pd product} {ergonomic}
+    uintx ProfiledCodeHeapSize                     = 122910970                              {pd product} {ergonomic}
+    uintx ReservedCodeCacheSize                    = 251658240                              {pd product} {ergonomic}
+     bool SegmentedCodeCache                       = true                                      {product} {ergonomic}
+     bool UseCompressedClassPointers               = true                                 {lp64_product} {ergonomic}
+     bool UseCompressedOops                        = true                                 {lp64_product} {ergonomic}
+     bool UseG1GC                                  = true                                      {product} {ergonomic}
+     bool UseLargePagesIndividualAllocation        = false                                  {pd product} {ergonomic}
+
+Logging:
+Log output configuration:
+ #0: stdout all=warning uptime,level,tags
+ #1: stderr all=off uptime,level,tags
+
+Environment Variables:
+JAVA_HOME=C:\Program Files\JetBrains\IntelliJ IDEA 2021.3\jbr
+PATH=C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files (x86)\Common Files\Acronis\SnapAPI\;C:\Program Files\PuTTY\;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Python\Python310\Scripts\;C:\Python\Python310\;C:\Users\tsadist\AppData\Local\Microsoft\WindowsApps;C:\Program Files\MySQL\MySQL Server 8.0\bin;C:\Apacha Maven\maven\bin;C:\sProgram Files\JetBrains\IntelliJ IDEA 2021.3\jbr;C:\Apacha Maven\apache-maven-3.8.6\bin;C:\Users\tsadist\.jdks\corretto-17.0.6;
+USERNAME=tsadist
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 126 Stepping 5, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows 11 , 64 bit Build 22000 (10.0.22000.1335)
+OS uptime: 6 days 1:21 hours
+Hyper-V role detected
+
+CPU:total 8 (initial active 8) (4 cores per cpu, 2 threads per core) family 6 model 126 stepping 5 microcode 0xa0, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, avx, avx2, aes, clmul, erms, 3dnowpref, lzcnt, ht, tsc, tscinvbit, bmi1, bmi2, adx, evex, sha, fma
+
+Memory: 4k page, system-wide physical 7883M (521M free)
+TotalPageFile size 16075M (AvailPageFile size 6M)
+current process WorkingSet (physical memory assigned to process): 25M, peak: 25M
+current process commit charge ("private bytes"): 73M, peak: 187M
+
+vm_info: OpenJDK 64-Bit Server VM (11.0.14.1+1-b1751.46) for windows-amd64 JRE (11.0.14.1+1-b1751.46), built on Feb 21 2022 15:19:20 by "" with MS VC++ 14.0 (VS2015)
+
+END.
