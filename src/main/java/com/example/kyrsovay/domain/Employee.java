@@ -22,8 +22,11 @@ public class Employee {
 
     private String name;
     private String surname;
-    private String email;
     private String phoneNumber;
+
+    private String username;
+    private String password;
+    private String email;
 
     @Enumerated(EnumType.STRING)
     private EmployeeRole employeeRole;

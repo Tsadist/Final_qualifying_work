@@ -43,14 +43,13 @@ public class CustomerController {
         return "redirect:/login";
     }
 
-
-    @GetMapping("/profile")
+    @GetMapping("/profileCustomer")
     public String getProfile(Model model
             ,@AuthenticationPrincipal CustomerUserDetails userDetails) {
         List<Order> orderList = orderRepo.findAllByCustomerId(userDetails.getCustomer().getId());
         model.addAttribute("orders", orderList);
         model.addAttribute("time", timeToString);
-        return "profile";
+        return "profileCustomer";
     }
 
     @GetMapping("/orderPage")
@@ -66,7 +65,7 @@ public class CustomerController {
         orderService.calculateOrderDuration(order.getId());
         orderService.employeeAppointment(order.getId());
         orderService.pricing(order.getId());
-        return "redirect:/profile";
+        return "redirect:/profileCustomer";
     }
 
     @GetMapping("/editDateAndTime")
