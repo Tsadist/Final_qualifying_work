@@ -1,5 +1,7 @@
 package com.example.kyrsovay.domain;
 
+import com.example.kyrsovay.domain.enums.EmployeeRole;
+import com.example.kyrsovay.domain.enums.OrderStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,7 +22,11 @@ public class Employee {
 
     private String name;
     private String surname;
+    private String email;
     private String phoneNumber;
+
+    @Enumerated(EnumType.STRING)
+    private EmployeeRole employeeRole;
 
     @OneToMany(mappedBy = "employee")
     private List<Schedule> schedule = new java.util.ArrayList<>();
