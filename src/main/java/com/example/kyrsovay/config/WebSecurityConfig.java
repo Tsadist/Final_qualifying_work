@@ -1,8 +1,6 @@
 package com.example.kyrsovay.config;
 
-import com.example.kyrsovay.repository.EmployeeRepo;
-import com.example.kyrsovay.service.CustomerService;
-import com.example.kyrsovay.service.EmployeeService;
+import com.example.kyrsovay.service.ClientService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,15 +11,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final CustomerService customerService;
-    private final EmployeeService employeeService;
+    private final ClientService clientService;
     private final EncryptionConfig encryptionConfig;
 
-    public WebSecurityConfig(CustomerService customerService,
-                             EmployeeService employeeService,
+    public WebSecurityConfig(ClientService clientService,
                              EncryptionConfig encryptionConfig) {
-        this.employeeService = employeeService;
-        this.customerService = customerService;
+        this.clientService = clientService;
         this.encryptionConfig = encryptionConfig;
     }
 
@@ -34,8 +29,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .loginPage("/login")
-                .successForwardUrl("/profile")
-//                .defaultSuccessUrl("/profile", true)
+                .defaultSuccessUrl("/profile", true)
                 .permitAll()
                 .and()
                 .logout()
@@ -43,9 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(customerService)
-                .passwordEncoder(encryptionConfig.getPasswordEncoder());
-        auth.userDetailsService(employeeService)
+        auth.userDetailsService(clientService)
                 .passwordEncoder(encryptionConfig.getPasswordEncoder());
     }
 }

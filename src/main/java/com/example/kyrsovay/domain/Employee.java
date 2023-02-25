@@ -1,13 +1,11 @@
 package com.example.kyrsovay.domain;
 
-import com.example.kyrsovay.domain.enums.EmployeeRole;
-import com.example.kyrsovay.domain.enums.OrderStatus;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Setter
 @Getter
@@ -16,25 +14,29 @@ import java.util.Set;
 public class Employee {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
+//    @GeneratedValue(strategy = GenerationType.AUTO)
+//    @Column(name = "id", nullable = false)
     private Long id;
 
-    private String name;
-    private String surname;
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @JoinColumn(name = "id")
+    private Client client;
+
     private String phoneNumber;
 
-    private String username;
-    private String password;
-    private String email;
+//    private String username;
+//    private String password;
+//    private String email;
 
-    @Enumerated(EnumType.STRING)
-    private EmployeeRole employeeRole;
-
-    @OneToMany(mappedBy = "employee")
-    private List<Schedule> schedule = new java.util.ArrayList<>();
+//    @Enumerated(EnumType.STRING)
+//    private UserRole userRole;
 
     @OneToMany(mappedBy = "employee")
-    private Set<Order> orders;
+    private List<Schedule> schedule = new ArrayList<>();
+
+    @OneToMany(mappedBy = "employee")
+    private List<Order> order;
+
 
 }

@@ -12,7 +12,7 @@ import java.sql.Date;
 @Getter
 @Setter
 @Entity
-@Table(name = "orders")
+@Table(name = "\"order\"")
 public class Order {
 
     @Id
@@ -36,7 +36,7 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
-    private Customer customer;
+    private Client customer;
 
     @ManyToOne
     @JoinColumn(name = "employee_id")

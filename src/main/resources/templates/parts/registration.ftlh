@@ -13,19 +13,17 @@
                 </h2>
 
                 <#if Session.SPRING_SECURITY_LAST_EXCEPTION??>
-                    <div style="margin-bottom: 10px">Вы ввели неправльный логин или пароль</div>
+                    <div style="margin-bottom: 10px">Вы ввели неправльный пароль или Email</div>
                 </#if>
 
 <#--                <#if Session.SPRING_SECURITY_LAST_EXCEPTION?? && Session.SPRING_SECURITY_LAST_EXCEPTION.message?has_content>-->
 <#--                    <@spring.message "Вы ввели неправльный логин или пароль"/>-->
 <#--                </#if>-->
 
-
                 <p>
-                    <label for="username" class="sr-only">Login</label>
-                    <input type="text" id="username" required
-                           name="username" class="form-control"
-                           placeholder="Username">
+                    <label for="email" class="sr-only">Email</label>
+                    <input type="text" id="email" required
+                           name="username" class="form-control" placeholder="Email">
                 </p>
                 <p>
                     <label for="password" class="sr-only">Password</label>
@@ -35,9 +33,10 @@
                 </p>
                 <#if isRegisterForm>
                     <p>
-                        <label for="email" class="sr-only">Login</label>
-                        <input type="text" id="email" required
-                               name="email" class="form-control" placeholder="Email">
+                        <label for="fio" class="sr-only">ФИО</label>
+                        <input type="text" id="fio" required
+                               name="fio" class="form-control"
+                               placeholder="ФИО">
                     </p>
                 </#if>
                 <input name="_csrf" type="hidden" value="${_csrf.token}">

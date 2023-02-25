@@ -1,14 +1,16 @@
 package com.example.kyrsovay.controller;
 
-import com.example.kyrsovay.config.CustomerUserDetails;
-import com.example.kyrsovay.domain.Customer;
+import com.example.kyrsovay.config.ClientUserDetails;
 import com.example.kyrsovay.domain.Order;
+import com.example.kyrsovay.domain.Client;
 import com.example.kyrsovay.domain.enums.OrderStatus;
-import com.example.kyrsovay.repository.CustomerRepo;
+import com.example.kyrsovay.domain.enums.ClientRole;
 import com.example.kyrsovay.repository.OrderRepo;
+import com.example.kyrsovay.repository.ClientRepo;
 import com.example.kyrsovay.service.OrderService;
 import com.example.kyrsovay.service.TimeToString;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,17 +20,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.sql.Date;
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class CustomerController {
 
-    private final CustomerRepo customerRepo;
+    private final ClientRepo clientRepo;
     private final OrderRepo orderRepo;
     private final OrderService orderService;
     private final TimeToString timeToString;
 
     @GetMapping("/")
-    public String mainPage() { return "main";}
+    public String mainPage() {
+        return "main";
+    }
 
     @GetMapping("/registration")
     public String getRegistration() {
@@ -36,20 +41,32 @@ public class CustomerController {
     }
 
     @PostMapping("/registration")
-    public String postRegistration(Customer customer) {
-        if (customerRepo.findByEmail(customer.getEmail()) == null) {
-            customerRepo.save(customer);
+    public String postRegistration(Client client) {
+        if (clientRepo.findByEmail(client.getEmail()) == null) {
+//            client.setClientRole(ClientRole.Заказчик);
+            clientRepo.save(client);
         }
         return "redirect:/login";
     }
 
-    @GetMapping("/profileCustomer")
-    public String getProfile(Model model
-            ,@AuthenticationPrincipal CustomerUserDetails userDetails) {
-        List<Order> orderList = orderRepo.findAllByCustomerId(userDetails.getCustomer().getId());
-        model.addAttribute("orders", orderList);
-        model.addAttribute("time", timeToString);
-        return "profileCustomer";
+    @GetMapping("/profile")
+    public String getProfile(Model model,
+                             @AuthenticationPrincipal ClientUserDetails userDetails) {
+        Client client = userDetails.getClient();
+
+        if (client.getEmail() != null) {
+            if (client.getClientRole() == ClientRole.Заказчик) {
+                List<Order> orderList = orderRepo.findAllByCustomerId(userDetails.getClient().getId());
+                model.addAttribute("orders", orderList);
+                model.addAttribute("time", timeToString);
+                return "customerProfile";
+            } else if (client.getClientRole() == ClientRole.Клинер ||
+                    client.getClientRole() == ClientRole.Менеджер) {
+                return "employeeProfile";
+            }
+        }
+        log.info("Пользователь с таким Email не был найден");
+        return "redirect:/login";
     }
 
     @GetMapping("/orderPage")
@@ -58,9 +75,9 @@ public class CustomerController {
     }
 
     @PostMapping("/orderPage")
-    public String postOrderPage(@AuthenticationPrincipal CustomerUserDetails userDetails,
+    public String postOrderPage(@AuthenticationPrincipal ClientUserDetails userDetails,
                                 Order order) {
-        order.setCustomer(userDetails.getCustomer());
+        order.setCustomer(userDetails.getClient());
         order = orderRepo.save(order);
         orderService.calculateOrderDuration(order.getId());
         orderService.employeeAppointment(order.getId());
@@ -102,7 +119,7 @@ public class CustomerController {
         Order order = orderRepo.findById(id).orElse(null);
         assert order != null;
 
-        if(cardNumber >= 1111111111111111L){
+        if (cardNumber >= 1111111111111111L) {
             order.setOrderStatus(OrderStatus.Оплачен);
         } else {
             order.setOrderStatus(OrderStatus.Ждет_оплаты);

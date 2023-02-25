@@ -1,5 +1,6 @@
 package com.example.kyrsovay.domain;
 
+import com.example.kyrsovay.domain.enums.ClientRole;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,18 +11,24 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "customer")
-public class Customer {
+@Table(name = "client")
+public class Client {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String username;
+    private String fio;
     private String password;
     private String email;
 
+    @Enumerated(EnumType.STRING)
+    private ClientRole clientRole;
+
     @OneToMany(mappedBy = "customer")
-    private List<Order> orderSet = new ArrayList<>();
+    private List<Order> orders = new ArrayList<>();
+
+//    @OneToMany(mappedBy = "employee")
+//    private Set<Order> orders;
 
 }

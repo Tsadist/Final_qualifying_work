@@ -1,22 +1,22 @@
 package com.example.kyrsovay.config;
 
-import com.example.kyrsovay.domain.Customer;
+import com.example.kyrsovay.domain.Client;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
 
-public class CustomerUserDetails implements UserDetails {
+public class ClientUserDetails implements UserDetails {
 
-    private final Customer customer;
+    private final Client client;
 
-    public CustomerUserDetails(Customer customer) {
-        this.customer = customer;
+    public ClientUserDetails(Client client) {
+        this.client = client;
     }
 
-    public Customer getCustomer() {
-        return customer;
+    public Client getClient() {
+        return client;
     }
 
     @Override
@@ -26,12 +26,12 @@ public class CustomerUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return customer.getPassword();
+        return client.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return customer.getUsername();
+        return client.getEmail();
     }
 
     @Override
