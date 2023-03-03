@@ -15,10 +15,10 @@ import java.util.List;
 public class Client {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    private String fio;
+    private String phoneNumber;
     private String password;
     private String email;
 
@@ -28,7 +28,7 @@ public class Client {
     @OneToMany(mappedBy = "customer")
     private List<Order> orders = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "employee")
+//    @OneToMany(mappedBy = "cleaner")
 //    private Set<Order> orders;
 
 }

@@ -1,4 +1,3 @@
+<#import "parts/registrationAndLogin.ftlh" as loginForm>
 
-<#import "parts/registration.ftlh" as reg>
-
-<@reg.registration "/login" false/>
+<@loginForm.form "/login" false />

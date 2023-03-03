@@ -36,7 +36,7 @@ public class Schedule {
     private int[] hours = new int[2];
 
     @ManyToOne
-    @JoinColumn(name = "employee_id")
-    private Employee employee;
+    @JoinColumn(name = "cleaner_id")
+    private Cleaner cleaner;
 
 }

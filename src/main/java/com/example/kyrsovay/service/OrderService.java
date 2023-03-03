@@ -41,7 +41,7 @@ public class OrderService {
                 getAllForAreaAndTimeOrders(id, order.getDuration(), dayOfWeek(id));
 
         if (!listSchedule.isEmpty()) {
-            order.setEmployee(listSchedule.get(0).getEmployee());
+            order.setCleaner(listSchedule.get(0).getCleaner());
             order.setOrderStatus(OrderStatus.Ждет_оплаты);
         } else {
             order.setOrderStatus(OrderStatus.Нет_сотрудника);

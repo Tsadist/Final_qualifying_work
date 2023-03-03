@@ -26,9 +26,7 @@ public class ClientService implements UserDetailsService {
             return new ClientUserDetails(byEmail);
         } else {
             log.error("Не найден Client в БД");
-            return null;
-//            System.out.println("EEEEERORE");
-//            throw new UsernameNotFoundException("Не найден Client в БД");
+            throw new UsernameNotFoundException("NOOOOOOO");
         }
     }
 

@@ -1,14 +1,13 @@
-
 <#import "parts/common.ftlh" as common>
 
 <@common.page>
     <form method="post">
         <div class="form-group">
-        <label>
-            Укажите площадь помещения
-            <input style="width: 100px" type="number" max="275"
-                   name="area" id="area" min="1">
-        </label>
+            <label>
+                Укажите площадь помещения
+                <input style="width: 100px" type="number" max="275"
+                       name="area" id="area" min="1">
+            </label>
         </div>
         <div class="form-group">
             <label>

@@ -39,7 +39,7 @@ public class Order {
     private Client customer;
 
     @ManyToOne
-    @JoinColumn(name = "employee_id")
-    private Employee employee;
+    @JoinColumn(name = "cleaner_id")
+    private Cleaner cleaner;
 
 }

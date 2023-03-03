@@ -1,4 +1,3 @@
-
 <#macro page>
 
     <!DOCTYPE html>

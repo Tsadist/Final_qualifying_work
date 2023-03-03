@@ -1,29 +1,36 @@
-<#macro registration path isRegisterForm>
+<#macro form path isRegisterForm>
     <#import "common.ftlh" as commom>
 
     <@commom.page>
         <div class="container">
             <form class="form-signin" action="${path}" method="post">
                 <h2 class="form-signin-heading">
-                    <#if !isRegisterForm>
-                        Войти
-                    <#else>
+                    <#if isRegisterForm>
                         Регистрация
+                    <#else>
+                        Войти
                     </#if>
                 </h2>
 
-                <#if Session.SPRING_SECURITY_LAST_EXCEPTION??>
-                    <div style="margin-bottom: 10px">Вы ввели неправльный пароль или Email</div>
+                <#if !isRegisterForm>
+                    <#if Session.SPRING_SECURITY_LAST_EXCEPTION??>
+                        <div style="margin-bottom: 10px">Вы ввели неправльный пароль или Email</div>
+                    </#if>
                 </#if>
 
-<#--                <#if Session.SPRING_SECURITY_LAST_EXCEPTION?? && Session.SPRING_SECURITY_LAST_EXCEPTION.message?has_content>-->
-<#--                    <@spring.message "Вы ввели неправльный логин или пароль"/>-->
-<#--                </#if>-->
+                <#--                <#if Session.SPRING_SECURITY_LAST_EXCEPTION?? && Session.SPRING_SECURITY_LAST_EXCEPTION.message?has_content>-->
+                <#--                    <@spring.message "Вы ввели неправльный логин или пароль"/>-->
+                <#--                </#if>-->
 
                 <p>
                     <label for="email" class="sr-only">Email</label>
                     <input type="text" id="email" required
-                           name="username" class="form-control" placeholder="Email">
+                            <#if isRegisterForm>
+                                name="email"
+                            <#else >
+                                name="username"
+                            </#if>
+                           class="form-control" placeholder="Email">
                 </p>
                 <p>
                     <label for="password" class="sr-only">Password</label>
@@ -33,10 +40,10 @@
                 </p>
                 <#if isRegisterForm>
                     <p>
-                        <label for="fio" class="sr-only">ФИО</label>
-                        <input type="text" id="fio" required
-                               name="fio" class="form-control"
-                               placeholder="ФИО">
+                        <label for="phoneNumber" class="sr-only">PhoneNumber</label>
+                        <input type="text" id="phoneNumber" required
+                               name="phoneNumber" class="form-control"
+                               placeholder="PhoneNumber">
                     </p>
                 </#if>
                 <input name="_csrf" type="hidden" value="${_csrf.token}">
@@ -55,11 +62,4 @@
             </form>
         </div>
     </@commom.page>
-</#macro>
-
-<#macro logout>
-    <form action="/logout" method="post">
-        <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-        <button class="btn btn-primary" type="submit">Выйти</button>
-    </form>
 </#macro>
