@@ -11,7 +11,7 @@ public interface ScheduledRepo extends JpaRepository<Schedule, Long> {
 
     @Query(nativeQuery = true, value = "select sc.*\n" +
             "from schedule sc\n" +
-            "         join orders o on o.id = ?1\n" +
+            "         join \"order\" o on o.id = ?1\n" +
             "where (sc.hours_work[2] - sc.hours_work[1]) >= ?2\n" +
             "  AND sc.day_of_week = ?3\n" +
             "  AND o.start_time >= sc.hours_work[1]\n" +

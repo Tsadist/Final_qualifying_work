@@ -28,7 +28,4 @@ public class Client {
     @OneToMany(mappedBy = "customer")
     private List<Order> orders = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "cleaner")
-//    private Set<Order> orders;
-
 }

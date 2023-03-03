@@ -9,7 +9,9 @@ import com.example.kyrsovay.domain.enums.ClientRole;
 import com.example.kyrsovay.repository.CleanerRepo;
 import com.example.kyrsovay.repository.ClientRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -17,7 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @RequiredArgsConstructor
 public class ManagerController {
 
-
+    private final BaseController baseController;
     private final ClientRepo clientRepo;
     private final CleanerRepo cleanerRepo;
 
@@ -38,8 +40,6 @@ public class ManagerController {
 
             Client newClient = clientRepo.save(client);
 
-            System.out.println(newClient.getId() + "????????");
-
             cleaner.setClient(newClient);
             cleaner.setId(newClient.getId());
             cleaner.setName(newCleanerModel.getName());
@@ -47,7 +47,7 @@ public class ManagerController {
             cleanerRepo.save(cleaner);
         }
 
-        return "redirect:/profileManager";
+        return "redirect:/profile";
     }
 
 }

@@ -13,13 +13,11 @@ import java.util.List;
 @Table(name = "cleaner")
 public class Cleaner {
 
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "id")
-    private Client client;
-
     @Id
     private Long id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    private Client client;
 
     private String name;
     private String surname;
@@ -29,6 +27,5 @@ public class Cleaner {
 
     @OneToMany(mappedBy = "cleaner")
     private List<Order> order = new ArrayList<>();
-
 
 }
