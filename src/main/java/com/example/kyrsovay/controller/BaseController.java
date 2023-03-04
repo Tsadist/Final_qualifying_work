@@ -6,6 +6,7 @@ import com.example.kyrsovay.domain.Order;
 import com.example.kyrsovay.domain.enums.ClientRole;
 import com.example.kyrsovay.repository.ClientRepo;
 import com.example.kyrsovay.repository.OrderRepo;
+import com.example.kyrsovay.service.ManagerService;
 import com.example.kyrsovay.service.TimeToString;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ public class BaseController {
     private final ClientRepo clientRepo;
     private final OrderRepo orderRepo;
     private final TimeToString timeToString;
+    private final ManagerService managerService;
 
     @GetMapping("/")
     public String mainPage() {
@@ -58,6 +60,7 @@ public class BaseController {
             case Клинер:
                 return "profileCleaner";
             case Менеджер:
+                model.addAttribute("cleanerList", managerService.getSortedListCleaner(userDetails));
                 return "profileManager";
             default:
                 log.info("Пользователь с таким Email не был найден");

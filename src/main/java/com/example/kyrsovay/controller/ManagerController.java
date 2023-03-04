@@ -1,6 +1,7 @@
 package com.example.kyrsovay.controller;
 
 
+import com.example.kyrsovay.config.ClientUserDetails;
 import com.example.kyrsovay.controller.models.NewCleanerModel;
 import com.example.kyrsovay.controller.utils.Randomizer;
 import com.example.kyrsovay.domain.Cleaner;
@@ -15,11 +16,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.lang.reflect.Array;
+import java.util.*;
+
 @Controller
 @RequiredArgsConstructor
 public class ManagerController {
 
-    private final BaseController baseController;
     private final ClientRepo clientRepo;
     private final CleanerRepo cleanerRepo;
 
@@ -49,5 +52,11 @@ public class ManagerController {
 
         return "redirect:/profile";
     }
+
+    @GetMapping("/cleaner")
+    public String getCleaner() {
+        return "/cleaner";
+    }
+
 
 }
