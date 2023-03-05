@@ -8,7 +8,7 @@
         Добавить нового сотрудника
     </a>
 
-    <table class="table mt-4">
+    <table class="table table-striped mt-4">
         <tbody>
         <#list cleanerList as cleaner>
             <tr>
