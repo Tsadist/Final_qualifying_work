@@ -1,23 +1,17 @@
 package com.example.kyrsovay.controller;
 
 
-import com.example.kyrsovay.config.ClientUserDetails;
 import com.example.kyrsovay.controller.models.NewCleanerModel;
 import com.example.kyrsovay.controller.utils.Randomizer;
-import com.example.kyrsovay.domain.Cleaner;
-import com.example.kyrsovay.domain.Client;
-import com.example.kyrsovay.domain.enums.ClientRole;
+import com.example.kyrsovay.models.Cleaner;
+import com.example.kyrsovay.models.Client;
+import com.example.kyrsovay.models.enums.ClientRole;
 import com.example.kyrsovay.repository.CleanerRepo;
 import com.example.kyrsovay.repository.ClientRepo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-
-import java.lang.reflect.Array;
-import java.util.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -36,7 +30,7 @@ public class ManagerController {
         Client client = new Client();
         Cleaner cleaner = new Cleaner();
         if (clientRepo.findByEmail(newCleanerModel.getEmail()) == null) {
-            client.setClientRole(ClientRole.Клинер);
+            client.setClientRole(ClientRole.CLEANER);
             client.setEmail(newCleanerModel.getEmail());
             client.setPhoneNumber(newCleanerModel.getPhoneNumber());
             client.setPassword(Randomizer.getRandomString());

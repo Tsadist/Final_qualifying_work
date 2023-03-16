@@ -1,6 +1,6 @@
 package com.example.kyrsovay.config;
 
-import com.example.kyrsovay.domain.Client;
+import com.example.kyrsovay.models.Client;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

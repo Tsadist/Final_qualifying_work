@@ -1,6 +1,6 @@
 package com.example.kyrsovay.repository;
 
-import com.example.kyrsovay.domain.Schedule;
+import com.example.kyrsovay.models.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

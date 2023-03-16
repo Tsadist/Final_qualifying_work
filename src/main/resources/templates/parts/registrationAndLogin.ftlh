@@ -4,13 +4,13 @@
     <@commom.page>
         <div class="container">
             <form class="form-signin" action="${path}" method="post">
-                <h2 class="form-signin-heading">
+                <h3 class="form-signin-heading mb-3">
                     <#if isRegisterForm>
                         Регистрация
                     <#else>
                         Войти
                     </#if>
-                </h2>
+                </h3>
 
                 <#if !isRegisterForm>
                     <#if Session.SPRING_SECURITY_LAST_EXCEPTION??>

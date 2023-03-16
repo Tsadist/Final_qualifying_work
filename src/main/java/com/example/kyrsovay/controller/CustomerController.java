@@ -1,62 +1,58 @@
 package com.example.kyrsovay.controller;
 
-import com.example.kyrsovay.config.ClientUserDetails;
-import com.example.kyrsovay.domain.Order;
-import com.example.kyrsovay.domain.enums.OrderStatus;
+import com.example.kyrsovay.ex.RequestException;
+import com.example.kyrsovay.models.Order;
+import com.example.kyrsovay.models.enums.CleaningType;
+import com.example.kyrsovay.models.enums.OrderStatus;
+import com.example.kyrsovay.models.enums.RoomType;
+import com.example.kyrsovay.models.response.OrderResponse;
 import com.example.kyrsovay.repository.OrderRepo;
 import com.example.kyrsovay.service.OrderService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.Arrays;
 
-@Slf4j
-@Controller
+@RestController
 @RequiredArgsConstructor
+@RequestMapping("/customer")
 public class CustomerController {
 
     private final OrderRepo orderRepo;
     private final OrderService orderService;
+    private static OrderResponse orderResponse;
 
-    @GetMapping("/orderPage")
-    public String getOrderPage() {
-        return "orderPage";
-    }
 
-    @PostMapping("/orderPage")
-    public String postOrderPage(@AuthenticationPrincipal ClientUserDetails userDetails,
-                                Order order) {
-        order.setCustomer(userDetails.getClient());
-        order = orderRepo.save(order);
-        orderService.calculateOrderDuration(order.getId());
-        orderService.employeeAppointment(order.getId());
-        orderService.pricing(order.getId());
-        return "redirect:/profileCustomer";
-    }
+    @PutMapping("/edit/order/{orderId}")
+    public ResponseEntity<OrderResponse> postEditDateAndTime(@PathVariable Long orderId,
+                                              @RequestParam Short startTime,
+                                              @RequestParam(required = false) Date theDate,
+                                              @RequestParam(required = false) Float area,
+                                              @RequestParam(required = false) CleaningType cleaningType,
+                                              @RequestParam(required = false) RoomType roomType) {
 
-    @GetMapping("/editDateAndTime")
-    public String getEditDateAndTime(Long id, Model model) {
-        Order order = orderRepo.findById(id).orElse(null);
-        model.addAttribute("order", order);
-        return "/editDateAndTime";
-    }
+        if (orderRepo.findById(orderId).isEmpty()) {
+            throw new RequestException(HttpStatus.NOT_FOUND, "Заказ с таким ID не найден");
+        }
 
-    @PostMapping("/editDateAndTime")
-    public String postEditDateAndTime(Date theDate, Short startTime, Long id) {
-        Order order = orderRepo.findById(id).orElse(null);
-        assert order != null;
+        if (theDate != null && theDate.toInstant().isBefore(Instant.from(LocalDate.now())) ||
+                startTime != null && (startTime < 8 || startTime > 22) ||
+                area != null && area <= 0 ||
+                cleaningType != null && !Arrays.toString(CleaningType.values()).contains(cleaningType.toString()) ||
+                roomType != null && !Arrays.toString(RoomType.values()).contains(roomType.toString()))
+            throw new RequestException(HttpStatus.BAD_REQUEST, "Введены невалидные данный при ропытке изменения заказа");
 
-        order.setStartTime(startTime);
-        order.setTheDate(theDate);
-        orderRepo.save(order);
-        orderService.employeeAppointment(id);
 
-        return "redirect:/profile";
+        orderResponse = orderService.putField(orderId, startTime, theDate, area, cleaningType, roomType);
+        orderService.employeeAppointment(orderId);
+
+        return ResponseEntity.ok(orderResponse);
     }
 
     @GetMapping("/paymentForm")
@@ -74,9 +70,9 @@ public class CustomerController {
         assert order != null;
 
         if (cardNumber >= 1111111111111111L) {
-            order.setOrderStatus(OrderStatus.Оплачен);
+            order.setOrderStatus(OrderStatus.PAID);
         } else {
-            order.setOrderStatus(OrderStatus.Ждет_оплаты);
+            order.setOrderStatus(OrderStatus.WAITING_FOR_PAYMENT);
         }
         orderRepo.save(order);
         return "redirect:/profile";

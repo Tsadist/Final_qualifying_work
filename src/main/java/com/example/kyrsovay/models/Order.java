@@ -1,8 +1,8 @@
-package com.example.kyrsovay.domain;
+package com.example.kyrsovay.models;
 
-import com.example.kyrsovay.domain.enums.CleaningType;
-import com.example.kyrsovay.domain.enums.OrderStatus;
-import com.example.kyrsovay.domain.enums.RoomType;
+import com.example.kyrsovay.models.enums.CleaningType;
+import com.example.kyrsovay.models.enums.OrderStatus;
+import com.example.kyrsovay.models.enums.RoomType;
 import lombok.Getter;
 import lombok.Setter;
 

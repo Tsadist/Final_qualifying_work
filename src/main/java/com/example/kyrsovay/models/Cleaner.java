@@ -1,4 +1,4 @@
-package com.example.kyrsovay.domain;
+package com.example.kyrsovay.models;
 
 import lombok.Getter;
 import lombok.Setter;

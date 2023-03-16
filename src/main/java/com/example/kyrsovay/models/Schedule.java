@@ -1,4 +1,4 @@
-package com.example.kyrsovay.domain;
+package com.example.kyrsovay.models;
 
 import com.vladmihalcea.hibernate.type.array.IntArrayType;
 import lombok.Getter;

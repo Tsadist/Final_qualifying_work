@@ -1,6 +1,6 @@
-package com.example.kyrsovay.domain;
+package com.example.kyrsovay.models;
 
-import com.example.kyrsovay.domain.enums.ClientRole;
+import com.example.kyrsovay.models.enums.ClientRole;
 import lombok.Getter;
 import lombok.Setter;
 

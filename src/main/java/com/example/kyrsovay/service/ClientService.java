@@ -1,7 +1,7 @@
 package com.example.kyrsovay.service;
 
 import com.example.kyrsovay.config.ClientUserDetails;
-import com.example.kyrsovay.domain.Client;
+import com.example.kyrsovay.models.Client;
 import com.example.kyrsovay.repository.ClientRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
