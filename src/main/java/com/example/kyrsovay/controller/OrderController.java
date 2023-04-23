@@ -2,7 +2,7 @@ package com.example.kyrsovay.controller;
 
 import com.example.kyrsovay.config.ClientUserDetails;
 import com.example.kyrsovay.ex.RequestException;
-import com.example.kyrsovay.models.Order;
+import com.example.kyrsovay.models.DB.Order;
 import com.example.kyrsovay.models.request.OrderRequest;
 import com.example.kyrsovay.models.response.IdResponse;
 import com.example.kyrsovay.models.response.OrderResponse;

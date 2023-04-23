@@ -1,9 +1,9 @@
 package com.example.kyrsovay.service;
 
-import com.example.kyrsovay.models.Cleaner;
-import com.example.kyrsovay.models.Client;
-import com.example.kyrsovay.models.Order;
-import com.example.kyrsovay.models.Schedule;
+import com.example.kyrsovay.models.DB.Cleaner;
+import com.example.kyrsovay.models.DB.Client;
+import com.example.kyrsovay.models.DB.Order;
+import com.example.kyrsovay.models.DB.Schedule;
 import com.example.kyrsovay.models.enums.CleaningType;
 import com.example.kyrsovay.models.enums.OrderStatus;
 import com.example.kyrsovay.models.enums.RoomType;

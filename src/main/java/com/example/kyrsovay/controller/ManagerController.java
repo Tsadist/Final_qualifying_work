@@ -3,8 +3,8 @@ package com.example.kyrsovay.controller;
 
 import com.example.kyrsovay.controller.models.NewCleanerModel;
 import com.example.kyrsovay.controller.utils.Randomizer;
-import com.example.kyrsovay.models.Cleaner;
-import com.example.kyrsovay.models.Client;
+import com.example.kyrsovay.models.DB.Cleaner;
+import com.example.kyrsovay.models.DB.Client;
 import com.example.kyrsovay.models.enums.ClientRole;
 import com.example.kyrsovay.repository.CleanerRepo;
 import com.example.kyrsovay.repository.ClientRepo;

@@ -1,7 +1,7 @@
 package com.example.kyrsovay.service;
 
 import com.example.kyrsovay.config.ClientUserDetails;
-import com.example.kyrsovay.models.Cleaner;
+import com.example.kyrsovay.models.DB.Cleaner;
 import com.example.kyrsovay.repository.CleanerRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

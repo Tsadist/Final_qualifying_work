@@ -1,7 +1,7 @@
 package com.example.kyrsovay.controller;
 
 import com.example.kyrsovay.ex.RequestException;
-import com.example.kyrsovay.models.Order;
+import com.example.kyrsovay.models.DB.Order;
 import com.example.kyrsovay.models.enums.CleaningType;
 import com.example.kyrsovay.models.enums.OrderStatus;
 import com.example.kyrsovay.models.enums.RoomType;

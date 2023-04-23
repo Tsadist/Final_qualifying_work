@@ -3,15 +3,12 @@ package com.example.kyrsovay.controller;
 import com.example.kyrsovay.config.ClientUserDetails;
 import com.example.kyrsovay.config.security.JwtTokenService;
 import com.example.kyrsovay.ex.RequestException;
-import com.example.kyrsovay.models.Client;
-import com.example.kyrsovay.models.Order;
+import com.example.kyrsovay.models.DB.Client;
 import com.example.kyrsovay.models.enums.ClientRole;
 import com.example.kyrsovay.models.request.LoginRequest;
 import com.example.kyrsovay.models.request.RegistrationRequest;
-import com.example.kyrsovay.models.response.CleanerResponse;
 import com.example.kyrsovay.models.response.ClientResponse;
 import com.example.kyrsovay.models.response.LoginResponse;
-import com.example.kyrsovay.models.response.OrderResponse;
 import com.example.kyrsovay.repository.ClientRepo;
 import com.example.kyrsovay.repository.OrderRepo;
 import com.example.kyrsovay.service.ManagerService;
@@ -26,9 +23,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @RestController

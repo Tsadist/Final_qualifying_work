@@ -3,7 +3,7 @@ package com.example.kyrsovay.config.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.kyrsovay.models.Client;
+import com.example.kyrsovay.models.DB.Client;
 import com.example.kyrsovay.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
