@@ -4,7 +4,7 @@ import com.example.kyrsovay.config.ClientUserDetails;
 import com.example.kyrsovay.ex.RequestException;
 import com.example.kyrsovay.models.DB.Order;
 import com.example.kyrsovay.models.request.OrderRequest;
-import com.example.kyrsovay.models.response.IdResponse;
+import com.example.kyrsovay.models.response.MessageResponse;
 import com.example.kyrsovay.models.response.OrderResponse;
 import com.example.kyrsovay.repository.OrderRepo;
 import com.example.kyrsovay.service.OrderService;
@@ -23,18 +23,14 @@ public class OrderController {
 
     private final OrderRepo orderRepo;
     private final OrderService orderService;
-    private IdResponse idResponse = new IdResponse();
+    private MessageResponse messageResponse = new MessageResponse();
     private static Order order;
 
 
     @GetMapping("/order/{orderId}")
     public ResponseEntity<OrderResponse> getOrderFormId(@PathVariable Long orderId) {
-        if(orderId <= 0) {
-            throw new RequestException(HttpStatus.BAD_REQUEST, "ID меньше нуля");
-        }
-        if (orderRepo.findById(orderId).isEmpty()) {
-            throw new RequestException(HttpStatus.NOT_FOUND, "Заказ с таким ID не найден");
-        }
+
+        orderService.checkingOrderId(orderId);
 
         order = orderRepo.findById(orderId).get();
         return ResponseEntity.ok(orderService.createOrderResponse(order));
@@ -50,29 +46,26 @@ public class OrderController {
     }
 
     @PostMapping("/create/order")
-    public ResponseEntity<IdResponse> createOrder(@AuthenticationPrincipal ClientUserDetails userDetails,
-                                                  @RequestBody OrderRequest orderRequest) {
+    public ResponseEntity<Long> createOrder(@AuthenticationPrincipal ClientUserDetails userDetails,
+                                            @RequestBody OrderRequest orderRequest) {
 
-        if (orderRequest.getArea() == null || orderRequest.getStartTime() == null ||
-                orderRequest.getCleaningType() == null || orderRequest.getRoomType() == null ||
-                orderRequest.getTheDate() == null)
-            throw new RequestException(HttpStatus.BAD_REQUEST, "Какое-то из полей не было передано");
-
-        order = new Order();
-        order.setCustomer(userDetails.getClient());
-        order.setArea(orderRequest.getArea());
-        order.setRoomType(orderRequest.getRoomType());
-        order.setCleaningType(orderRequest.getCleaningType());
-        order.setTheDate(orderRequest.getTheDate());
-        order.setStartTime(orderRequest.getStartTime());
-        order = orderRepo.save(order);
-
-        orderService.calculateOrderDuration(order.getId());
-        orderService.employeeAppointment(order.getId());
-        orderService.pricing(order.getId());
-
-        idResponse.setId(order.getId());
-
-        return ResponseEntity.ok(idResponse);
+        return ResponseEntity
+                .ok(orderService
+                        .createOrder(userDetails, orderRequest));
     }
+
+    @PutMapping("/edit/order/{orderId}")
+    public ResponseEntity<MessageResponse> editOrder(@PathVariable Long orderId,
+                                             @RequestBody OrderRequest orderRequest) {
+
+        orderService.checkingOrderId(orderId);
+
+        messageResponse.setMessage(String.valueOf(orderService
+                .editOrder(orderId, orderRequest)));
+
+        return ResponseEntity
+                .ok(messageResponse);
+
+    }
+
 }

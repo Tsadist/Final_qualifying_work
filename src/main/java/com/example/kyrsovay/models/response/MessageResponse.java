@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class IdResponse {
+public class MessageResponse {
 
-    private Long id;
+    private String message;
 }

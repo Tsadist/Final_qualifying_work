@@ -10,9 +10,6 @@ import com.example.kyrsovay.models.request.RegistrationRequest;
 import com.example.kyrsovay.models.response.ClientResponse;
 import com.example.kyrsovay.models.response.LoginResponse;
 import com.example.kyrsovay.repository.ClientRepo;
-import com.example.kyrsovay.repository.OrderRepo;
-import com.example.kyrsovay.service.ManagerService;
-import com.example.kyrsovay.service.TimeToString;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -33,9 +30,6 @@ public class BaseController {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenService jwtTokenService;
 
-    private final OrderRepo orderRepo;
-    private final TimeToString timeToString;
-    private final ManagerService managerService;
     private static Client client;
 
 
