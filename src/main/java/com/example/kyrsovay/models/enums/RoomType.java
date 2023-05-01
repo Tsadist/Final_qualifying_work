@@ -8,7 +8,7 @@ public enum RoomType {
     COMMERCIAL(1f, 1.5f, 2f);
 
     @Getter
-    private float regular, general, afterRepair;
+    private final float regular, general, afterRepair;
 
     RoomType(float regular, float general, float afterRepair) {
         this.regular = regular;
