@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>Kyrsovay</artifactId>
+    <artifactId>FQW</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Kyrsovay</name>
-    <description>Kyrsovay</description>
+    <name>FQW</name>
+    <description>FQW</description>
     <properties>
         <java.version>11</java.version>
     </properties>
@@ -54,7 +54,6 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
         </dependency>
         <!--Lombok-->
         <dependency>
