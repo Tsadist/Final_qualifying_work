@@ -36,5 +36,11 @@ public class User {
     @OneToMany(mappedBy = "cleaner")
     private List<Schedule> schedule = new ArrayList<>();
 
+    @OneToMany(mappedBy = "createUser")
+    private List<Chat> chats = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Message> messages = new ArrayList<>();
+
 
 }
