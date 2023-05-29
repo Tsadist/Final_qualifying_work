@@ -12,14 +12,15 @@ import com.example.FQW.models.request.OrderRequest;
 import com.example.FQW.models.response.CleanerResponse;
 import com.example.FQW.models.response.MessageResponse;
 import com.example.FQW.models.response.OrderResponse;
-import com.example.FQW.repository.*;
+import com.example.FQW.repository.AdditionServiceRepo;
+import com.example.FQW.repository.OrderRepo;
+import com.example.FQW.repository.ScheduledRepo;
+import com.example.FQW.repository.VacationRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
-import java.time.LocalDate;
-import java.time.temporal.ChronoField;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
@@ -145,12 +146,6 @@ public class OrderService {
         orderRepo.save(order);
     }
 
-//    private Cleaner getCleanerFromOrder(Order order) {
-//        String dayOfWeek = dayOfWeek(order).toString();
-//
-//        List<Schedule> scheduleListFromObjDays = scheduledRepo.getAllByObjDays();
-//    }
-
     private void calculateOrderDuration(Order order) {
         float minTime = (float) (Math.ceil(order.getArea() / 25f) * 0.5f);
         RoomType roomType = order.getRoomType();
@@ -227,11 +222,6 @@ public class OrderService {
                 (additionServicesId == null || isCorrectAdditionServices(additionServicesId));
     }
 
-    private Integer dayOfWeek(Order order) {
-        LocalDate date = order.getTheDate().toLocalDate();
-        return date.getDayOfWeek().get(ChronoField.DAY_OF_WEEK);
-    }
-
     private boolean isCorrectTheDate(Date theDate) {
         return (theDate != null &&
                 !theDate.before(new java.util.Date()));
@@ -264,12 +254,5 @@ public class OrderService {
                 .map(AdditionService::getId)
                 .collect(Collectors.toList());
         return collect.containsAll(additionServicesId);
-//        return allAdditionServices
-//                .stream()
-//                .allMatch(additionService -> additionServicesId.contains(additionService.getId()));
-//        List<Long> collect = allAdditionServices.stream().map(AdditionService::getId).collect(Collectors.toList());
-
-
-//        return collect.contains();
     }
 }

@@ -31,8 +31,6 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenService jwtTokenService;
 
-//    private static User user;
-
     @GetMapping("/registration")
     public HttpStatus getRegistration() {
         return HttpStatus.OK;
@@ -64,7 +62,6 @@ public class UserController {
         }
 
         loginResponse.setToken(jwtTokenService.createToken(user));
-
         return ResponseEntity.ok(loginResponse);
     }
 
@@ -83,7 +80,4 @@ public class UserController {
 
         return ResponseEntity.ok(userResponse);
     }
-
-
 }
-

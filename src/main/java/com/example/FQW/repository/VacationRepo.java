@@ -16,4 +16,6 @@ public interface VacationRepo extends JpaRepository<Vacation, Long> {
             "WHERE vac.start_day < o.the_date\n" +
             "AND vac.end_day > o.the_date;")
     List<User> findAllCleanerByDateOrder(Long orderId);
+
+    List<Vacation> getAllByCleanerId (Long cleanerId);
 }

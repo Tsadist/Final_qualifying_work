@@ -60,7 +60,8 @@ public class ScheduleService {
                     });
             return getScheduleResponses(scheduleList);
         } else {
-            throw new RequestException(HttpStatus.BAD_REQUEST, "Номера недель в запросе больше 4-х или меньше 1");
+            throw new RequestException(HttpStatus.BAD_REQUEST, "Номера недель в запросе больше 4-х " +
+                    "или меньше 1 или время выходит за пределы 24 часового дня");
         }
     }
 
@@ -76,7 +77,19 @@ public class ScheduleService {
             });
             return getScheduleResponses(scheduleList);
         } else {
-            throw new RequestException(HttpStatus.BAD_REQUEST, "Номера недель в запросе больше 53-х или меньше 1");
+            throw new RequestException(HttpStatus.BAD_REQUEST, "Номера недель в запросе больше 53-х или меньше 1 " +
+                    "или время выходит за пределы 24 часового дня");
+        }
+    }
+
+    public MessageResponse deleteAllSchedule(CustomUserDetails userDetails) {
+        Long cleanerId = userDetails.getClient().getId();
+        scheduledRepo.deleteAllByCleanerId(cleanerId);
+
+        if (scheduledRepo.findAllByCleanerId(cleanerId).isEmpty()) {
+            return new MessageResponse("Расписание сотрудника было успешно удалено");
+        } else {
+            throw new RequestException(HttpStatus.NOT_IMPLEMENTED, "Не удалось удалить расписание");
         }
     }
 
@@ -104,16 +117,5 @@ public class ScheduleService {
                                 scheduleHours.getEndTime() <= 24 &&
                                 scheduleHours.getStartTime() > 0 &&
                                 scheduleHours.getStartTime() <= 24);
-    }
-
-    public MessageResponse deleteAllSchedule(CustomUserDetails userDetails) {
-        Long cleanerId = userDetails.getClient().getId();
-        scheduledRepo.deleteAllByCleanerId(cleanerId);
-
-        if (scheduledRepo.findAllByCleanerId(cleanerId).isEmpty()) {
-            return new MessageResponse("Расписание сотрудника было успешно удалено");
-        } else {
-            throw new RequestException(HttpStatus.NOT_IMPLEMENTED, "Не удалось удалить расписание");
-        }
     }
 }
