@@ -1,24 +1,32 @@
 package com.example.FQW.repository;
 
 import com.example.FQW.models.DB.Schedule;
+import com.example.FQW.models.DB.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface ScheduledRepo extends JpaRepository<Schedule, Long> {
 
 
-    @Query(nativeQuery = true, value = "select sc.*\n" +
-            "from schedule sc\n" +
-            "         join \"order\" o on o.id = ?1\n" +
-            "where (sc.hours_work[2] - sc.hours_work[1]) >= ?2\n" +
-            "  AND sc.day_of_week = ?3\n" +
-            "  AND o.start_time >= sc.hours_work[1]\n" +
-            "  AND o.start_time + ?2 <= sc.hours_work[2]")
-    List<Schedule> getAllForAreaAndTimeOrders(Long orderId,
-                                              Float duration,
-                                              Integer dayOfWeek);
+    @Query(nativeQuery = true, value =
+            "SELECT DISTINCT sc.cleaner_id FROM schedule sc " +
+                    "JOIN orders o on o.id =?1 " +
+                    "WHERE o.start_time>= to_number(" +
+                        "sc.obj_days # >> cast(" +
+                            "'{' || extract(dow from o.the_date) || ',startTime}'AS text[]),'99') " +
+                    "AND o.start_time +o.duration <= to_number(" +
+                        "sc.obj_days #>>cast(" +
+                            "'{'|| extract(dow from o.the_date) ||',endTime}'AS text[]), '99')")
+    List<User> findAllCleanerFromDayOfWeekAndDuration(Long orderId);
 
-    List<Schedule> getAllByCleanerId(Long cleanerId);
+    List<Schedule> findAllByCleanerId(Long cleanerId);
+
+    Schedule findByCleanerIdAndNumberWeek(Long cleanerId, int numberWeek);
+
+    void deleteAllByCleanerId(Long cleanerId);
+
 }
+

@@ -3,7 +3,6 @@ package com.example.FQW.models.DB;
 import com.example.FQW.models.enums.CleaningType;
 import com.example.FQW.models.enums.OrderStatus;
 import com.example.FQW.models.enums.RoomType;
-import com.vladmihalcea.hibernate.type.array.IntArrayType;
 import com.vladmihalcea.hibernate.type.array.LongArrayType;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +12,6 @@ import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter

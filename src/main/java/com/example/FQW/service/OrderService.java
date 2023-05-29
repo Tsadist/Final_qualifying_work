@@ -4,7 +4,6 @@ import com.example.FQW.config.CustomUserDetails;
 import com.example.FQW.ex.RequestException;
 import com.example.FQW.models.DB.AdditionService;
 import com.example.FQW.models.DB.Order;
-import com.example.FQW.models.DB.Schedule;
 import com.example.FQW.models.DB.User;
 import com.example.FQW.models.enums.CleaningType;
 import com.example.FQW.models.enums.OrderStatus;
@@ -13,9 +12,7 @@ import com.example.FQW.models.request.OrderRequest;
 import com.example.FQW.models.response.CleanerResponse;
 import com.example.FQW.models.response.MessageResponse;
 import com.example.FQW.models.response.OrderResponse;
-import com.example.FQW.repository.AdditionServiceRepo;
-import com.example.FQW.repository.OrderRepo;
-import com.example.FQW.repository.ScheduledRepo;
+import com.example.FQW.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -34,6 +31,7 @@ public class OrderService {
 
     private final OrderRepo orderRepo;
     private final ScheduledRepo scheduledRepo;
+    private final VacationRepo vacationRepo;
     private final AdditionServiceRepo additionServiceRepo;
 
     public OrderResponse getOrder(CustomUserDetails userDetails, Long orderId) {
@@ -128,11 +126,17 @@ public class OrderService {
 
     private void employeeAppointment(Order order) {
         checkingForDuration(order);
-        List<Schedule> listSchedule = scheduledRepo.
-                getAllForAreaAndTimeOrders(order.getId(), order.getDuration(), dayOfWeek(order));
+        List<User> cleanersFromSchedule = scheduledRepo
+                .findAllCleanerFromDayOfWeekAndDuration(order.getId());
+        List<User> cleanersFromVacation = vacationRepo
+                .findAllCleanerByDateOrder(order.getId());
 
-        if (!listSchedule.isEmpty()) {
-            order.setCleaner(listSchedule.get(0).getCleaner());
+        List<User> suitableCleaner  = cleanersFromSchedule.stream()
+                .filter(cleaner -> !cleanersFromVacation.contains(cleaner))
+                .collect(Collectors.toList());
+
+        if (!suitableCleaner.isEmpty()) {
+            order.setCleaner(suitableCleaner.get(0));
             order.setOrderStatus(OrderStatus.WAITING_FOR_PAYMENT);
         } else {
             order.setOrderStatus(OrderStatus.NO_EMPLOYEE);
@@ -140,6 +144,12 @@ public class OrderService {
 
         orderRepo.save(order);
     }
+
+//    private Cleaner getCleanerFromOrder(Order order) {
+//        String dayOfWeek = dayOfWeek(order).toString();
+//
+//        List<Schedule> scheduleListFromObjDays = scheduledRepo.getAllByObjDays();
+//    }
 
     private void calculateOrderDuration(Order order) {
         float minTime = (float) (Math.ceil(order.getArea() / 25f) * 0.5f);
@@ -249,7 +259,10 @@ public class OrderService {
 
     private boolean isCorrectAdditionServices(List<Long> additionServicesId) {
         List<AdditionService> allAdditionServices = additionServiceRepo.findAll();
-        List<Long> collect = allAdditionServices.stream().map(AdditionService::getId).collect(Collectors.toList());
+        List<Long> collect = allAdditionServices
+                .stream()
+                .map(AdditionService::getId)
+                .collect(Collectors.toList());
         return collect.containsAll(additionServicesId);
 //        return allAdditionServices
 //                .stream()

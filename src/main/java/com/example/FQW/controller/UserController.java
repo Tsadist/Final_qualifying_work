@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class BaseController {
+public class UserController {
 
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;

@@ -1,7 +1,6 @@
 package com.example.FQW.models.DB;
 
-import com.vladmihalcea.hibernate.type.array.IntArrayType;
-import com.vladmihalcea.hibernate.type.json.JsonBlobType;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -16,13 +15,13 @@ import java.util.HashMap;
 @Setter
 @Entity
 @TypeDefs({
-        @TypeDef(
-                name = "time-array",
-                typeClass = IntArrayType.class
-        ),
+//        @TypeDef(
+//                name = "time-array",
+//                typeClass = IntArrayType.class
+//        ),
         @TypeDef(
                 name = "jb",
-                typeClass = JsonBlobType.class
+                typeClass = JsonBinaryType.class
         )
 })
 @Table(name = "schedule")
@@ -31,23 +30,24 @@ public class Schedule {
 
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue
     private Long id;
 
-    private Short dayOfWeek;
-    @Type(type = "time-array")
-    @Column(
-            name = "hours_work",
-            columnDefinition = "integer[]"
-    )
-    private int[] hours = new int[2];
     private int numberWeek;
+
+    @Getter
+    @Setter
+    public static class ScheduleHours {
+        private int startTime;
+        private int endTime;
+    }
 
     @Type(type = "jb")
     @Column(
             name = "obj_days",
             columnDefinition = "jsonb"
     )
-    private HashMap<Long, int[]> objDays;
+    private HashMap<String, ScheduleHours> objDays;
 
     @ManyToOne
     @JoinColumn(name = "cleaner_id")

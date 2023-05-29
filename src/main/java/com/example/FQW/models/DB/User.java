@@ -18,10 +18,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-//    @OnDelete(action = OnDeleteAction.CASCADE)
-//    @OneToOne(fetch = FetchType.LAZY)
-//    private Client client;
-
     private String phoneNumber;
     private String password;
     private String email;
