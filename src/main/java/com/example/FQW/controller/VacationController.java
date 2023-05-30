@@ -31,7 +31,7 @@ public class VacationController {
     }
 
     @PreAuthorize("hasRole('MANAGER')")
-    @PostMapping("/create/vacation/{cleanerId}")
+    @PostMapping("/vacation/{cleanerId}/create")
     public ResponseEntity<VacationResponse> createVacation(@PathVariable Long cleanerId,
                                                                  @RequestBody VacationResponse vacationResponse,
                                                                  @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -39,7 +39,7 @@ public class VacationController {
     }
 
     @PreAuthorize("hasRole('MANAGER')")
-    @DeleteMapping("/delete/vacation/{vacationId}")
+    @DeleteMapping("/vacation/{vacationId}/delete")
     public ResponseEntity<MessageResponse> createVacation (@PathVariable Long vacationId){
         return ResponseEntity.ok(vacationService.deleteVacation(vacationId));
     }

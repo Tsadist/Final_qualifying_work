@@ -26,21 +26,21 @@ public class ScheduleController {
     }
 
     @PreAuthorize("hasRole('CLEANER')")
-    @PostMapping("/create/schedule")
+    @PostMapping("/schedule/create")
     public ResponseEntity<List<ScheduleResponse>> createSchedule(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                  @RequestBody List<ScheduleRequest> scheduleRequests) {
         return ResponseEntity.ok(scheduleService.createSchedule(userDetails, scheduleRequests));
     }
 
     @PreAuthorize("hasRole('CLEANER')")
-    @PostMapping("/edit/schedule")
+    @PostMapping("/schedule/edit")
     public ResponseEntity<List<ScheduleResponse>> editSchedule(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                  @RequestBody List<ScheduleRequest> scheduleRequests) {
         return ResponseEntity.ok(scheduleService.editSchedule(userDetails, scheduleRequests));
     }
 
     @PreAuthorize("hasRole('MANAGER')")
-    @DeleteMapping("/delete/all/schedule")
+    @DeleteMapping("/schedule/delete/all")
     public ResponseEntity<MessageResponse> deleteOrder(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(scheduleService.deleteAllSchedule(userDetails));
     }
