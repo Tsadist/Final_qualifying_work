@@ -2,7 +2,7 @@ package com.example.FQW.models.DB;
 
 import lombok.Getter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Getter
@@ -16,8 +16,5 @@ public class AdditionService {
     private String title;
     private int cost;
     private float duration;
-
-//    @OneToMany(mappedBy = "addition_services")
-//    private Order order;
 
 }

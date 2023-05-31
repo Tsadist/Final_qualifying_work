@@ -3,7 +3,7 @@ package com.example.FQW.models.DB;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.sql.Date;
 
 @Setter

@@ -1,10 +1,10 @@
 package com.example.FQW.models.DB;
 
 import com.example.FQW.models.enums.ChatStatus;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

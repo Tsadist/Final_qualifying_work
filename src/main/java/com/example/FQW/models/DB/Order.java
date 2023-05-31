@@ -3,26 +3,18 @@ package com.example.FQW.models.DB;
 import com.example.FQW.models.enums.CleaningType;
 import com.example.FQW.models.enums.OrderStatus;
 import com.example.FQW.models.enums.RoomType;
-import com.vladmihalcea.hibernate.type.array.LongArrayType;
+import io.hypersistence.utils.hibernate.type.array.LongArrayType;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
 
-import javax.persistence.*;
 import java.sql.Date;
 import java.util.List;
 
 @Getter
 @Setter
 @Entity
-@TypeDefs({
-        @TypeDef(
-                name = "larr",
-                typeClass = LongArrayType.class
-        )
-})
 @Table(name = "orders")
 public class Order {
 
@@ -53,7 +45,7 @@ public class Order {
     @JoinColumn(name = "cleaner_id")
     private User cleaner;
 
-    @Type(type = "larr")
+    @Type(LongArrayType.class)
     private List<Long> additionServicesId;
 
     @OneToMany(mappedBy = "order")

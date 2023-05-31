@@ -5,7 +5,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.FQW.models.DB.User;
 import com.example.FQW.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +15,11 @@ public class JwtTokenService {
     private final static String secretKey = "mySecretKey1324";
     private final static Algorithm ALGORITHM = Algorithm.HMAC256(secretKey);
 
-    @Autowired
-    private UserService clientSecurityService;
+    private final UserService clientSecurityService;
+
+    public JwtTokenService(UserService clientSecurityService) {
+        this.clientSecurityService = clientSecurityService;
+    }
 
     public String createToken(User user){
         return JWT

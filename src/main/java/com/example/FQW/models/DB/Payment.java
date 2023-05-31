@@ -4,7 +4,7 @@ import com.example.FQW.models.enums.StatusPayment;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
@@ -20,8 +20,7 @@ public class Payment {
     private Long idPayment;
     private String linkForPayment;
 
-    @Enumerated(EnumType.STRING)
-    private StatusPayment statusPayment;
+    private String statusPayment;
 
     private LocalDateTime time;
     private Integer sum;
