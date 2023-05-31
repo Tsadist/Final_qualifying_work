@@ -10,7 +10,7 @@ import com.example.FQW.models.enums.OrderStatus;
 import com.example.FQW.models.enums.RoomType;
 import com.example.FQW.models.request.OrderRequest;
 import com.example.FQW.models.response.CleanerResponse;
-import com.example.FQW.models.response.MessageResponse;
+import com.example.FQW.models.response.AnswerResponse;
 import com.example.FQW.models.response.OrderResponse;
 import com.example.FQW.repository.AdditionServiceRepo;
 import com.example.FQW.repository.OrderRepo;
@@ -88,12 +88,12 @@ public class OrderService {
         }
     }
 
-    public MessageResponse deleteOrder(CustomUserDetails userDetails, Long orderId) {
+    public AnswerResponse deleteOrder(CustomUserDetails userDetails, Long orderId) {
         Order order = returnOrderIsItExistsFromUserDetails(userDetails, orderId);
         orderRepo.delete(order);
 
         if (orderRepo.findById(orderId).isEmpty()) {
-            return new MessageResponse("Заказ был успешно удален");
+            return new AnswerResponse("Заказ был успешно удален");
         } else {
             throw new RequestException(HttpStatus.NOT_IMPLEMENTED, "Не удалось удалить заказ");
         }

@@ -26,7 +26,7 @@ public class UserService implements UserDetailsService {
             return new CustomUserDetails(byEmail);
         } else {
             log.error("Не найден Client в БД");
-            throw new UsernameNotFoundException("NOOOOOOO");
+            throw new UsernameNotFoundException("Не найдет пользователь");
         }
     }
 

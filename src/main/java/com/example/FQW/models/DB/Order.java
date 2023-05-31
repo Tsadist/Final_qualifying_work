@@ -45,7 +45,6 @@ public class Order {
     private Float duration;
     private Integer cost;
 
-
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private User customer;
@@ -57,9 +56,7 @@ public class Order {
     @Type(type = "larr")
     private List<Long> additionServicesId;
 
-//    @ManyToOne
-//    @JoinColumn(name = "addition_services_id")
-//    private List<AdditionService> additionServices = new ArrayList<>();
-
+    @OneToMany(mappedBy = "order")
+    private List<Payment> payments;
 
 }

@@ -9,7 +9,7 @@ import com.example.FQW.models.request.LoginRequest;
 import com.example.FQW.models.request.RegistrationRequest;
 import com.example.FQW.models.response.UserResponse;
 import com.example.FQW.models.response.LoginResponse;
-import com.example.FQW.models.response.MessageResponse;
+import com.example.FQW.models.response.AnswerResponse;
 import com.example.FQW.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<MessageResponse> registration(@RequestBody RegistrationRequest newClientRequest) {
+    public ResponseEntity<AnswerResponse> registration(@RequestBody RegistrationRequest newClientRequest) {
         if (userRepo.findByEmail(newClientRequest.getEmail()) == null) {
 
             User user = new User();
@@ -46,7 +46,7 @@ public class UserController {
             user.setPassword(newClientRequest.getPassword());
             user.setPhoneNumber(newClientRequest.getPhoneNumber());
             userRepo.save(user);
-            return ResponseEntity.ok(new MessageResponse("Пользователь создан"));
+            return ResponseEntity.ok(new AnswerResponse("Пользователь создан"));
         }
         throw new RequestException(HttpStatus.BAD_REQUEST, "Пользователь с таким email уже существует");
     }

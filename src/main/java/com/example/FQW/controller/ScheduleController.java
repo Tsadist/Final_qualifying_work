@@ -2,7 +2,7 @@ package com.example.FQW.controller;
 
 import com.example.FQW.config.CustomUserDetails;
 import com.example.FQW.models.request.ScheduleRequest;
-import com.example.FQW.models.response.MessageResponse;
+import com.example.FQW.models.response.AnswerResponse;
 import com.example.FQW.models.response.ScheduleResponse;
 import com.example.FQW.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
@@ -40,8 +40,8 @@ public class ScheduleController {
     }
 
     @PreAuthorize("hasRole('MANAGER')")
-    @DeleteMapping("/schedule/delete/all")
-    public ResponseEntity<MessageResponse> deleteOrder(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    @DeleteMapping("/schedule/all/delete")
+    public ResponseEntity<AnswerResponse> deleteOrder(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(scheduleService.deleteAllSchedule(userDetails));
     }
 }

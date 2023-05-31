@@ -1,12 +1,11 @@
 package com.example.FQW.models.DB;
 
-import com.example.FQW.models.enums.StatusChat;
+import com.example.FQW.models.enums.ChatStatus;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +19,9 @@ public class Chat {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private StatusChat status;
+    @Enumerated(EnumType.STRING)
+    private ChatStatus status;
+
     private String topic;
     private LocalDateTime createTime;
     private LocalDateTime lastModifiedTime;

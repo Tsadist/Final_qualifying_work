@@ -3,7 +3,7 @@ package com.example.FQW.controller;
 import com.example.FQW.config.CustomUserDetails;
 import com.example.FQW.models.request.OrderRequest;
 import com.example.FQW.models.response.AdditionServiceResponse;
-import com.example.FQW.models.response.MessageResponse;
+import com.example.FQW.models.response.AnswerResponse;
 import com.example.FQW.models.response.OrderResponse;
 import com.example.FQW.service.AdditionServiceService;
 import com.example.FQW.service.OrderService;
@@ -57,8 +57,8 @@ public class OrderController {
 
     @PreAuthorize("hasRole('CUSTOMER')")
     @DeleteMapping("/order/{orderId}/delete")
-    public ResponseEntity<MessageResponse> deleteOrder(@PathVariable Long orderId,
-                                                       @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<AnswerResponse> deleteOrder(@PathVariable Long orderId,
+                                                      @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(orderService.deleteOrder(userDetails, orderId));
     }
 

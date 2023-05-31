@@ -1,7 +1,7 @@
 package com.example.FQW.controller;
 
 import com.example.FQW.config.CustomUserDetails;
-import com.example.FQW.models.response.MessageResponse;
+import com.example.FQW.models.response.AnswerResponse;
 import com.example.FQW.models.response.VacationResponse;
 import com.example.FQW.service.VacationService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class VacationController {
     }
 
     @PreAuthorize("hasRole('CLEANER')")
-    @GetMapping("/vacation/")
+    @GetMapping("/vacation")
     public ResponseEntity<List<VacationResponse>> getVacation(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(vacationService.getVacation(userDetails));
     }
@@ -40,7 +40,7 @@ public class VacationController {
 
     @PreAuthorize("hasRole('MANAGER')")
     @DeleteMapping("/vacation/{vacationId}/delete")
-    public ResponseEntity<MessageResponse> createVacation (@PathVariable Long vacationId){
+    public ResponseEntity<AnswerResponse> createVacation (@PathVariable Long vacationId){
         return ResponseEntity.ok(vacationService.deleteVacation(vacationId));
     }
 

@@ -4,7 +4,7 @@ import com.example.FQW.config.CustomUserDetails;
 import com.example.FQW.ex.RequestException;
 import com.example.FQW.models.DB.Schedule;
 import com.example.FQW.models.request.ScheduleRequest;
-import com.example.FQW.models.response.MessageResponse;
+import com.example.FQW.models.response.AnswerResponse;
 import com.example.FQW.models.response.ScheduleResponse;
 import com.example.FQW.repository.ScheduledRepo;
 import lombok.RequiredArgsConstructor;
@@ -82,12 +82,12 @@ public class ScheduleService {
         }
     }
 
-    public MessageResponse deleteAllSchedule(CustomUserDetails userDetails) {
+    public AnswerResponse deleteAllSchedule(CustomUserDetails userDetails) {
         Long cleanerId = userDetails.getClient().getId();
         scheduledRepo.deleteAllByCleanerId(cleanerId);
 
         if (scheduledRepo.findAllByCleanerId(cleanerId).isEmpty()) {
-            return new MessageResponse("Расписание сотрудника было успешно удалено");
+            return new AnswerResponse("Расписание сотрудника было успешно удалено");
         } else {
             throw new RequestException(HttpStatus.NOT_IMPLEMENTED, "Не удалось удалить расписание");
         }

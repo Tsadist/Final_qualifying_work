@@ -3,7 +3,7 @@ package com.example.FQW.service;
 import com.example.FQW.config.CustomUserDetails;
 import com.example.FQW.ex.RequestException;
 import com.example.FQW.models.DB.Vacation;
-import com.example.FQW.models.response.MessageResponse;
+import com.example.FQW.models.response.AnswerResponse;
 import com.example.FQW.models.response.VacationResponse;
 import com.example.FQW.repository.VacationRepo;
 import lombok.RequiredArgsConstructor;
@@ -43,11 +43,11 @@ public class VacationService {
         }
     }
 
-    public MessageResponse deleteVacation(Long vacationId) {
+    public AnswerResponse deleteVacation(Long vacationId) {
         vacationRepo.deleteById(vacationId);
 
         if (vacationRepo.findById(vacationId).isEmpty()) {
-            return new MessageResponse("Запись об отпуске была успешно удалена");
+            return new AnswerResponse("Запись об отпуске была успешно удалена");
         } else {
             throw new RequestException(HttpStatus.NOT_IMPLEMENTED, "Не удалось удалить запись об отпуске сотрудника");
         }
