@@ -8,9 +8,10 @@ import com.example.FQW.models.DB.User;
 import com.example.FQW.models.enums.CleaningType;
 import com.example.FQW.models.enums.OrderStatus;
 import com.example.FQW.models.enums.RoomType;
+import com.example.FQW.models.enums.UserRole;
 import com.example.FQW.models.request.OrderRequest;
-import com.example.FQW.models.response.CleanerResponse;
 import com.example.FQW.models.response.AnswerResponse;
+import com.example.FQW.models.response.CleanerResponse;
 import com.example.FQW.models.response.OrderResponse;
 import com.example.FQW.repository.AdditionServiceRepo;
 import com.example.FQW.repository.OrderRepo;
@@ -41,7 +42,15 @@ public class OrderService {
     }
 
     public List<OrderResponse> getAllOrders(CustomUserDetails userDetails) {
-        List<Order> orderList = orderRepo.findAllByCustomerId(userDetails.getClient().getId());
+        User user = userDetails.getClient();
+        List<Order> orderList;
+        if (user.getUserRole() == UserRole.CUSTOMER) {
+            orderList = orderRepo.findAllByCustomerId(user.getId());
+        } else if (user.getUserRole() == UserRole.CLEANER) {
+            orderList = orderRepo.findAllByCleanerId(user.getId());
+        } else {
+            throw new RequestException(HttpStatus.UNAUTHORIZED, "У вас нет доступа к этому методу");
+        }
         return orderList
                 .stream()
                 .map(this::getOrderResponse)

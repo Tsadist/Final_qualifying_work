@@ -12,10 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -44,30 +41,30 @@ public class ChatController {
     }
 
     @PreAuthorize("hasRole('CUSTOMER')")
-    @GetMapping("/chat/create")
+    @PostMapping("/chat/create")
     public ResponseEntity<ChatResponse> createChat(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                    @RequestBody ChatRequest chatRequest) {
         return ResponseEntity.ok(chatService.createChat(userDetails, chatRequest));
     }
 
     @PreAuthorize("hasRole('MODERATOR') or hasRole('CUSTOMER')")
-    @GetMapping("/message/create")
+    @PostMapping("/message/create")
     public ResponseEntity<MessageResponse> createMessage(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                          @RequestBody MessageRequest messageRequest) {
         return ResponseEntity.ok(chatService.createMessage(userDetails, messageRequest));
     }
 
     @PreAuthorize("hasRole('MODERATOR')")
-    @GetMapping("/chat/{chatId}/delete")
-    public ResponseEntity<AnswerResponse> deleteChat(@PathVariable Long chatId) {
-        return ResponseEntity.ok(chatService.deleteChat(chatId));
-    }
-
-    @PreAuthorize("hasRole('MODERATOR')")
-    @GetMapping("/chat/{chatId}/status/change")
+    @PutMapping ("/chat/{chatId}/status/change")
     public ResponseEntity<ChatResponse> changeStatusChat(@PathVariable Long chatId,
                                                          @RequestBody ChatStatusRequest chatStatusRequest) {
         return ResponseEntity.ok(chatService.changeStatusChat(chatId, chatStatusRequest));
+    }
+
+    @PreAuthorize("hasRole('MODERATOR')")
+    @DeleteMapping ("/chat/{chatId}/delete")
+    public ResponseEntity<AnswerResponse> deleteChat(@PathVariable Long chatId) {
+        return ResponseEntity.ok(chatService.deleteChat(chatId));
     }
 
 

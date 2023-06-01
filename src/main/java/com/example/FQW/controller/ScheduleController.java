@@ -33,7 +33,7 @@ public class ScheduleController {
     }
 
     @PreAuthorize("hasRole('CLEANER')")
-    @PostMapping("/schedule/edit")
+    @PutMapping("/schedule/edit")
     public ResponseEntity<List<ScheduleResponse>> editSchedule(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                  @RequestBody List<ScheduleRequest> scheduleRequests) {
         return ResponseEntity.ok(scheduleService.editSchedule(userDetails, scheduleRequests));

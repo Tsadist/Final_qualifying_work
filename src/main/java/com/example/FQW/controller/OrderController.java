@@ -27,14 +27,14 @@ public class OrderController {
         return ResponseEntity.ok(additionServiceService.getAdditionService());
     }
 
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('CLEANER')")
     @GetMapping("/order/{orderId}")
     public ResponseEntity<OrderResponse> getOrderFormId(@PathVariable Long orderId,
                                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(orderService.getOrder(userDetails, orderId));
     }
 
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('CLEANER')")
     @GetMapping("/orders")
     public ResponseEntity<List<OrderResponse>> getOrders(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(orderService.getAllOrders(userDetails));
@@ -48,7 +48,7 @@ public class OrderController {
     }
 
     @PreAuthorize("hasRole('CUSTOMER')")
-    @PostMapping("/order/{orderId}/edit")
+    @PutMapping("/order/{orderId}/edit")
     public ResponseEntity<OrderResponse> editOrder(@PathVariable Long orderId,
                                                    @AuthenticationPrincipal CustomUserDetails userDetails,
                                                    @RequestBody OrderRequest orderRequest) {

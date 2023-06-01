@@ -10,6 +10,8 @@ public class UserResponse {
 
     private Long id;
     private String phoneNumber;
+    private String name;
+    private String surname;
     private String email;
     private UserRole role;
 }
