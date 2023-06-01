@@ -34,3 +34,4 @@ build/
 
 ### Custom ###
 *.log
+/src/main/java/com/example/FQW/Yookassa/AuthDate.java
