@@ -3,6 +3,7 @@ package com.example.FQW.Yookassa;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Builder
@@ -35,13 +36,15 @@ public class YookassaModel {
     private Confirmation confirmation;
     private Receipt receipt;
 
-    @Data
+    @Setter
+    @Getter
     public static class Receipt{
         private Customer customer;
         private Item[] items;
     }
 
-    @Data
+    @Setter
+    @Getter
     public static class Item{
         private String description;
         private Amount amount;
@@ -49,7 +52,8 @@ public class YookassaModel {
         private Integer quantity = 1;
     }
 
-    @Data
+    @Setter
+    @Getter
     public static class Customer{
         private String full_name;
         private String inn;
@@ -57,7 +61,8 @@ public class YookassaModel {
         private String phone;
     }
 
-    @Data
+    @Setter
+    @Getter
     public static class Confirmation{
         private String type = "redirect";
         private String confirmation_token;
@@ -65,19 +70,22 @@ public class YookassaModel {
         private String confirmation_url;
     }
 
-    @Data
+    @Setter
+    @Getter
     public static class IncomeAmount {
         private String value;
         private String currency;
     }
 
-    @Data
+    @Setter
+    @Getter
     public static class Recipient {
         private String account_id;
         private String gateway_id;
     }
 
-    @Data
+    @Setter
+    @Getter
     public static class PaymentMethod {
         private String type;
         private String id;
@@ -85,7 +93,8 @@ public class YookassaModel {
         private String title;
     }
 
-    @Data
+    @Setter
+    @Getter
     public static class Card {
         private String first6;
         private String last4;
@@ -96,8 +105,8 @@ public class YookassaModel {
         private String issuer_name;
     }
 
-    @Data
-    @Builder
+    @Setter
+    @Getter
     public static class Amount {
         private String value;
         private String currency;

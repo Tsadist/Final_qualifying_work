@@ -2,7 +2,6 @@ package com.example.FQW.Yookassa;
 
 import com.example.FQW.ex.RequestException;
 import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.springframework.http.HttpStatus;
@@ -11,12 +10,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.UUID;
 
-public class Client {
+public class YookassaClient {
 
     private final static String APIEndpoint = "https://api.yookassa.ru/v3/";
 
-    //    private final static String accountId = AuthDate.accountId;
-//    private final static String secretKey = AuthDate.secretKey;
     private final static String authorization = "Basic " + Base64.getEncoder()
             .encodeToString((AuthDate.accountId + ":" + AuthDate.secretKey)
                     .getBytes(StandardCharsets.UTF_8));
@@ -25,7 +22,7 @@ public class Client {
         try {
             HttpResponse<YookassaModel> response = Unirest
                     .post(APIEndpoint + "/payments")
-                    .header("Authorization", Client.authorization)
+                    .header("Authorization", YookassaClient.authorization)
                     .header("Idempotence-Key", UUID.randomUUID().toString())
                     .header("Content-Type", "application/json")
                     .body(yookassaModel)

@@ -1,5 +1,6 @@
 package com.example.FQW.service;
 
+import com.example.FQW.Yookassa.YookassaModel;
 import com.example.FQW.config.CustomUserDetails;
 import com.example.FQW.ex.RequestException;
 import com.example.FQW.models.DB.AdditionService;
@@ -35,6 +36,7 @@ public class OrderService {
     private final ScheduledRepo scheduledRepo;
     private final VacationRepo vacationRepo;
     private final AdditionServiceRepo additionServiceRepo;
+    private final PaymentService paymentService;
 
     public OrderResponse getOrder(CustomUserDetails userDetails, Long orderId) {
         Order order = returnOrderIsItExistsFromUserDetails(userDetails, orderId);
@@ -110,9 +112,17 @@ public class OrderService {
 
     private OrderResponse getOrderResponse(Order order) {
         User cleaner = order.getCleaner();
+        String paymentStatus = paymentService
+                .getPaymentForOrderId(order)
+                .getStatusPayment();
+        String paymentURL = order.getPaymentURL();
 
         if (cleaner == null) {
             cleaner = new User();
+        }
+
+        if (!paymentStatus.equals(YookassaModel.Status.waiting_for_capture.toString())) {
+            paymentURL = null;
         }
 
         return OrderResponse.builder()
@@ -131,6 +141,7 @@ public class OrderService {
                 .duration(order.getDuration())
                 .additionServicesId(order.getAdditionServicesId())
                 .orderStatus(order.getOrderStatus())
+                .paymentURL(paymentURL)
                 .build();
     }
 
@@ -141,9 +152,9 @@ public class OrderService {
         List<User> cleanersFromVacation = vacationRepo
                 .findAllCleanerByDateOrder(order.getId());
 
-        List<User> suitableCleaner  = cleanersFromSchedule.stream()
+        List<User> suitableCleaner = cleanersFromSchedule.stream()
                 .filter(cleaner -> !cleanersFromVacation.contains(cleaner))
-                .collect(Collectors.toList());
+                .toList();
 
         if (!suitableCleaner.isEmpty()) {
             order.setCleaner(suitableCleaner.get(0));
@@ -158,21 +169,12 @@ public class OrderService {
     private void calculateOrderDuration(Order order) {
         float minTime = (float) (Math.ceil(order.getArea() / 25f) * 0.5f);
         RoomType roomType = order.getRoomType();
-        float duration;
-
-        switch (order.getCleaningType()) {
-            case REGULAR:
-                duration = minTime * roomType.getRegular();
-                break;
-            case GENERAL:
-                duration = minTime * roomType.getGeneral();
-                break;
-            case AFTER_REPAIR:
-                duration = minTime * roomType.getAfterRepair();
-                break;
-            default:
-                throw new RequestException(HttpStatus.BAD_REQUEST, "Cleaning type не соответствует ни одному из значения enum");
-        }
+        float duration = switch (order.getCleaningType()) {
+            case REGULAR -> minTime * roomType.getRegular();
+            case GENERAL -> minTime * roomType.getGeneral();
+            case AFTER_REPAIR -> minTime * roomType.getAfterRepair();
+            default -> throw new RequestException(HttpStatus.BAD_REQUEST, "Cleaning type не соответствует ни одному из значения enum");
+        };
 
         order.setDuration(duration);
         orderRepo.save(order);
@@ -196,6 +198,9 @@ public class OrderService {
         checkingForDuration(order);
         Integer cost = (int) (order.getDuration() / 0.5F * 1000);
         order.setCost(cost);
+        order.setPaymentURL(paymentService
+                .createPayment(cost, order, order.getCustomer().getEmail())
+                .getLinkForPayment());
         orderRepo.save(order);
     }
 

@@ -1,15 +1,14 @@
 package com.example.FQW.models.DB;
 
-import com.example.FQW.models.enums.StatusPayment;
+import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
+@Builder
 @Table(name = "payment")
 public class Payment {
 
@@ -17,15 +16,17 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private Long idPayment;
+    private String idPayment;
     private String linkForPayment;
-
     private String statusPayment;
+    private String time;
+    private String sum;
 
-    private LocalDateTime time;
-    private Integer sum;
-
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "order_id")
     private Order order;
+
+    public Payment() {
+
+    }
 }

@@ -36,6 +36,7 @@ public class Order {
     private Short startTime;
     private Float duration;
     private Integer cost;
+    private String paymentURL;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
@@ -47,8 +48,5 @@ public class Order {
 
     @Type(LongArrayType.class)
     private List<Long> additionServicesId;
-
-    @OneToMany(mappedBy = "order")
-    private List<Payment> payments;
 
 }
