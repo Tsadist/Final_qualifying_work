@@ -71,9 +71,10 @@ public class OrderService {
             order.setAdditionServicesId(orderRequest.getAdditionServicesId());
 
             Order newOrder = orderRepo.save(order);
-            calculateOrderDuration(newOrder);
+            List<AdditionService> additionServiceList = additionServiceRepo.findAllById(order.getAdditionServicesId());
+            calculateOrderDuration(newOrder, additionServiceList);
             employeeAppointment(newOrder);
-            costCalculation(newOrder);
+            costCalculation(newOrder, additionServiceList);
 
             return getOrderResponse(newOrder);
         } else {
@@ -115,7 +116,7 @@ public class OrderService {
         String paymentStatus = paymentService
                 .getPaymentForOrderId(order)
                 .getStatusPayment();
-        String paymentURL = order.getPaymentURL();
+        String paymentURL = order.getPaymentUrl();
 
         if (cleaner == null) {
             cleaner = new User();
@@ -146,7 +147,6 @@ public class OrderService {
     }
 
     private void employeeAppointment(Order order) {
-        checkingForDuration(order);
         List<User> cleanersFromSchedule = scheduledRepo
                 .findAllCleanerFromDayOfWeekAndDuration(order.getId());
         List<User> cleanersFromVacation = vacationRepo
@@ -166,15 +166,22 @@ public class OrderService {
         orderRepo.save(order);
     }
 
-    private void calculateOrderDuration(Order order) {
+    private void calculateOrderDuration(Order order, List<AdditionService> additionServiceList) {
         float minTime = (float) (Math.ceil(order.getArea() / 25f) * 0.5f);
         RoomType roomType = order.getRoomType();
         float duration = switch (order.getCleaningType()) {
             case REGULAR -> minTime * roomType.getRegular();
             case GENERAL -> minTime * roomType.getGeneral();
             case AFTER_REPAIR -> minTime * roomType.getAfterRepair();
-            default -> throw new RequestException(HttpStatus.BAD_REQUEST, "Cleaning type не соответствует ни одному из значения enum");
         };
+
+        List<Float> durationAdditionService = additionServiceList
+                .stream()
+                .map(AdditionService::getDuration)
+                .toList();
+        for (Float durationAS: durationAdditionService) {
+            duration += durationAS;
+        }
 
         order.setDuration(duration);
         orderRepo.save(order);
@@ -194,20 +201,22 @@ public class OrderService {
         return order;
     }
 
-    private void costCalculation(Order order) {
-        checkingForDuration(order);
+    private void costCalculation(Order order, List<AdditionService> additionServiceList) {
         Integer cost = (int) (order.getDuration() / 0.5F * 1000);
+        List<Integer> costAdditionService = additionServiceList
+                .stream()
+                .map(AdditionService::getCost)
+                .toList();
+
+        for (Integer costAS: costAdditionService) {
+            cost += costAS;
+        }
+
         order.setCost(cost);
-        order.setPaymentURL(paymentService
+        order.setPaymentUrl(paymentService
                 .createPayment(cost, order, order.getCustomer().getEmail())
                 .getLinkForPayment());
         orderRepo.save(order);
-    }
-
-    private void checkingForDuration(Order order) {
-        if (order.getDuration() == null) {
-            calculateOrderDuration(order);
-        }
     }
 
     private boolean isCreateOrder(OrderRequest orderRequest) {
@@ -266,7 +275,7 @@ public class OrderService {
         List<Long> collect = allAdditionServices
                 .stream()
                 .map(AdditionService::getId)
-                .collect(Collectors.toList());
+                .toList();
         return collect.containsAll(additionServicesId);
     }
 }

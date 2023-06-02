@@ -4,12 +4,15 @@ import com.example.FQW.ex.RequestException;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.UUID;
 
+@Configuration
 public class YookassaClient {
 
     private final static String APIEndpoint = "https://api.yookassa.ru/v3/";

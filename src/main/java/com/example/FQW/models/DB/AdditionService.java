@@ -1,8 +1,7 @@
 package com.example.FQW.models.DB;
 
-import lombok.Getter;
-
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
 @Getter
@@ -14,7 +13,7 @@ public class AdditionService {
     private Long id;
 
     private String title;
-    private int cost;
-    private float duration;
+    private Integer cost;
+    private Float duration;
 
 }

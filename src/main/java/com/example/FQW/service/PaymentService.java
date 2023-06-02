@@ -25,15 +25,14 @@ public class PaymentService {
         YookassaModel requestModel = getYookassaModel(value, order.getId(), emailCustomer);
         YookassaModel responseModel = yookassaClient.create(requestModel);
 
-        Payment payment = Payment
-                .builder()
-                .idPayment(responseModel.getId())
-                .linkForPayment(responseModel.getConfirmation().getConfirmation_url())
-                .statusPayment(responseModel.getStatus().toString())
-                .sum(responseModel.getAmount().getValue())
-                .time(responseModel.getCreated_at())
-                .order(order)
-                .build();
+        Payment payment = new Payment();
+        payment.setIdPayment(responseModel.getId());
+        payment.setStatusPayment(responseModel.getStatus().toString());
+        payment.setLinkForPayment(responseModel.getConfirmation().getConfirmation_url());
+        payment.setOrder(order);
+        payment.setSum(responseModel.getAmount().getValue());
+        payment.setTime(responseModel.getCreated_at());
+
         return paymentRepo.save(payment);
     }
 

@@ -36,7 +36,7 @@ public class Order {
     private Short startTime;
     private Float duration;
     private Integer cost;
-    private String paymentURL;
+    private String paymentUrl;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
