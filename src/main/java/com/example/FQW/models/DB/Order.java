@@ -47,6 +47,6 @@ public class Order {
     private User cleaner;
 
     @Type(LongArrayType.class)
-    private List<Long> additionServicesId;
+    private Long[] additionServicesId;
 
 }

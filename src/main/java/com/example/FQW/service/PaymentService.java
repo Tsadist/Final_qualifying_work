@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PaymentService {
 
-    private final static String sum = "%s .00";
+    private final static String sum = "%s.00";
     private final static String currency = "RUB";
     private final static String description = "Оплата заказа № %d для %s";
     private final static String returnURL = "http://locakalhost:8020/order";
@@ -27,7 +27,7 @@ public class PaymentService {
 
         Payment payment = new Payment();
         payment.setIdPayment(responseModel.getId());
-        payment.setStatusPayment(responseModel.getStatus().toString());
+        payment.setStatusPayment(responseModel.getStatus().name());
         payment.setLinkForPayment(responseModel.getConfirmation().getConfirmation_url());
         payment.setOrder(order);
         payment.setSum(responseModel.getAmount().getValue());

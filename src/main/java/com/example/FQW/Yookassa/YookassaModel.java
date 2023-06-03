@@ -3,15 +3,19 @@ package com.example.FQW.Yookassa;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Builder
+@ToString
 public class YookassaModel {
 
+    @ToString
     public enum Status{
         pending, waiting_for_capture, succeeded, canceled
     }
 
+    @ToString
     public enum StatusReceiptRegistration{
         pending, succeeded, canceled
     }
@@ -37,6 +41,7 @@ public class YookassaModel {
 
     @Setter
     @Getter
+    @ToString
     public static class Receipt{
         private Customer customer;
         private Item[] items;
@@ -44,6 +49,7 @@ public class YookassaModel {
 
     @Setter
     @Getter
+    @ToString
     public static class Item{
         private String description;
         private Amount amount;
@@ -53,6 +59,7 @@ public class YookassaModel {
 
     @Setter
     @Getter
+    @ToString
     public static class Customer{
         private String full_name;
         private String inn;
@@ -62,6 +69,7 @@ public class YookassaModel {
 
     @Setter
     @Getter
+    @ToString
     public static class Confirmation{
         private String type = "redirect";
         private String confirmation_token;
@@ -71,6 +79,7 @@ public class YookassaModel {
 
     @Setter
     @Getter
+    @ToString
     public static class IncomeAmount {
         private String value;
         private String currency;
@@ -78,6 +87,7 @@ public class YookassaModel {
 
     @Setter
     @Getter
+    @ToString
     public static class Recipient {
         private String account_id;
         private String gateway_id;
@@ -85,6 +95,7 @@ public class YookassaModel {
 
     @Setter
     @Getter
+    @ToString
     public static class PaymentMethod {
         private String type;
         private String id;
@@ -94,6 +105,7 @@ public class YookassaModel {
 
     @Setter
     @Getter
+    @ToString
     public static class Card {
         private String first6;
         private String last4;
@@ -106,6 +118,7 @@ public class YookassaModel {
 
     @Setter
     @Getter
+    @ToString
     public static class Amount {
         private String value;
         private String currency;

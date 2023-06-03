@@ -22,7 +22,7 @@ public class OrderResponse {
     private CleanerResponse cleaner;
     private Integer cost;
     private Float duration;
-    private List<Long> additionServicesId;
+    private Long[] additionServicesId;
     private OrderStatus orderStatus;
     private String paymentURL;
 }

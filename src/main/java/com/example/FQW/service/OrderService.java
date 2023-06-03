@@ -71,7 +71,7 @@ public class OrderService {
             order.setAdditionServicesId(orderRequest.getAdditionServicesId());
 
             Order newOrder = orderRepo.save(order);
-            List<AdditionService> additionServiceList = additionServiceRepo.findAllById(order.getAdditionServicesId());
+            List<AdditionService> additionServiceList = additionServiceRepo.findAllById(List.of(order.getAdditionServicesId()));
             calculateOrderDuration(newOrder, additionServiceList);
             employeeAppointment(newOrder);
             costCalculation(newOrder, additionServiceList);
@@ -235,7 +235,7 @@ public class OrderService {
         Date theDate = orderRequest.getTheDate();
         CleaningType cleaningType = orderRequest.getCleaningType();
         Short startTime = orderRequest.getStartTime();
-        List<Long> additionServicesId = orderRequest.getAdditionServicesId();
+        Long[] additionServicesId = orderRequest.getAdditionServicesId();
 
         return ((area == null || isCorrectArea(area)) &&
                 (roomType == null || isCorrectRoomType(roomType)) &&
@@ -270,12 +270,12 @@ public class OrderService {
                 Arrays.toString(RoomType.values()).contains(roomType.toString()));
     }
 
-    private boolean isCorrectAdditionServices(List<Long> additionServicesId) {
+    private boolean isCorrectAdditionServices(Long[] additionServicesId) {
         List<AdditionService> allAdditionServices = additionServiceRepo.findAll();
         List<Long> collect = allAdditionServices
                 .stream()
                 .map(AdditionService::getId)
                 .toList();
-        return collect.containsAll(additionServicesId);
+        return collect.containsAll(List.of(additionServicesId));
     }
 }

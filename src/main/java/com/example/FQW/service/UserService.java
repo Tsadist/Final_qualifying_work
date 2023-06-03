@@ -8,10 +8,14 @@ import com.example.FQW.models.enums.UserRole;
 import com.example.FQW.models.request.AuthorizeRequest;
 import com.example.FQW.models.request.NewEmployeeRequest;
 import com.example.FQW.models.request.ProfileEditRequest;
+import com.example.FQW.models.request.RegistrationRequest;
+import com.example.FQW.models.response.AnswerResponse;
 import com.example.FQW.models.response.UserResponse;
 import com.example.FQW.repository.UserRepo;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,15 +23,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
-@Slf4j
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
     private final UserRepo userRepo;
-
-    public UserService(UserRepo userRepo) {
-        this.userRepo = userRepo;
-    }
+    private final MailSender mailSender;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -71,6 +73,26 @@ public class UserService implements UserDetailsService {
         return getUserResponse(userRepo.save(user));
     }
 
+    public AnswerResponse createCustomer(RegistrationRequest registrationRequest) {
+        if (userRepo.findByEmail(registrationRequest.getEmail()) == null) {
+            String activationCode = "";
+
+            User user = new User();
+            user.setUserRole(UserRole.CUSTOMER);
+            user.setEmail(registrationRequest.getEmail());
+            user.setPassword(registrationRequest.getPassword());
+            user.setPhoneNumber(registrationRequest.getPhoneNumber());
+            userRepo.save(user);
+            String message = String
+                    .format("Для активации личного кабинета перейдите по ссылке: http://localhost:8020/activate/%s",
+                            activationCode);
+            mailSender.send(registrationRequest.getEmail(), "Активация аккаунта", message);
+            return new AnswerResponse("Пользователь успешно создан, для входа в ЛК нужно подтвердить аккаунт");
+
+        }
+        throw new RequestException(HttpStatus.BAD_REQUEST, "Пользователь с таким email уже существует");
+    }
+
     public UserResponse createEmployee(NewEmployeeRequest newEmployeeRequest) {
         if (userRepo.findByEmail(newEmployeeRequest.getEmail()) == null
                 && isUserRoleBelongsEmployee(newEmployeeRequest.getUserRole())) {
@@ -81,6 +103,7 @@ public class UserService implements UserDetailsService {
             user.setName(newEmployeeRequest.getName());
             user.setSurname(newEmployeeRequest.getSurname());
             user.setPassword(Randomizer.getRandomString());
+            user.setActive(true);
             return getUserResponse(userRepo.save(user));
         } else {
             throw new RequestException(HttpStatus.BAD_REQUEST, "Сотрудник с таким email уже существует");

@@ -17,5 +17,5 @@ public class OrderRequest {
 //    @JsonFormat(pattern="dd-MM-yyyy")
     private Date theDate;
     private Short startTime;
-    private List<Long> additionServicesId;
+    private Long[] additionServicesId;
 }

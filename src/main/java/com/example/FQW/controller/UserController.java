@@ -31,18 +31,8 @@ public class UserController {
     private final JwtTokenService jwtTokenService;
 
     @PostMapping("/registration")
-    public ResponseEntity<AnswerResponse> registration(@RequestBody RegistrationRequest newClientRequest) {
-        if (userRepo.findByEmail(newClientRequest.getEmail()) == null) {
-
-            User user = new User();
-            user.setUserRole(UserRole.CUSTOMER);
-            user.setEmail(newClientRequest.getEmail());
-            user.setPassword(newClientRequest.getPassword());
-            user.setPhoneNumber(newClientRequest.getPhoneNumber());
-            userRepo.save(user);
-            return ResponseEntity.ok(new AnswerResponse("Пользователь создан"));
-        }
-        throw new RequestException(HttpStatus.BAD_REQUEST, "Пользователь с таким email уже существует");
+    public ResponseEntity<AnswerResponse> registration(@RequestBody RegistrationRequest registrationRequest) {
+        return ResponseEntity.ok(userService.createCustomer(registrationRequest));
     }
 
     @PreAuthorize("hasRole('MANAGER')")
@@ -59,6 +49,8 @@ public class UserController {
         User user = userRepo.findByEmail(loginClientRequest.getEmail());
         if (user == null || !passwordEncoder.matches(loginClientRequest.getPassword(), user.getPassword())) {
             throw new RequestException(HttpStatus.UNAUTHORIZED, "Введен неверный логин или пароль");
+        } else if (!user.isActive()){
+            throw new RequestException(HttpStatus.UNAUTHORIZED, "Вы не активировали аккаунт");
         }
 
         loginResponse.setToken(jwtTokenService.createToken(user));

@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import jakarta.persistence.*;
+import org.springframework.boot.context.properties.bind.DefaultValue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +25,9 @@ public class User {
     private String email;
     private String name;
     private String surname;
+
+    @Column(columnDefinition = "boolean default false not null")
+    private boolean active;
 
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
