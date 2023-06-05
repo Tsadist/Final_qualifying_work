@@ -38,51 +38,43 @@ public class ChatService {
 
     public List<MessageResponse> getAllMessage(Long chatId) {
         Chat chat = getChatIfHeExist(chatId);
-        return messageRepo
-                .findAllByChatId(chat.getId())
-                .stream()
-                .map(this::getMessageResponse)
-                .collect(Collectors.toList());
+        return getListMessageResponse(messageRepo.findAllByChatId(chat.getId()));
     }
 
     public List<ChatResponse> getAllChat(CustomUserDetails userDetails) {
         User user = userDetails.getClient();
         if (user.getUserRole() == UserRole.CUSTOMER) {
-            Long customerId = user.getId();
-            return chatRepo
-                    .findAllByCreateUserId(customerId)
-                    .stream()
-                    .map(this::getChatResponse)
-                    .collect(Collectors.toList());
+            return getListChatResponse(chatRepo.findAllByCreateUserId(user.getId()));
         } else {
-            return chatRepo
-                    .findAll()
-                    .stream()
-                    .map(this::getChatResponse)
-                    .collect(Collectors.toList());
+            return getListChatResponse(chatRepo.findAll());
         }
     }
 
     public MessageResponse createMessage(CustomUserDetails userDetails, MessageRequest messageRequest) {
         Chat chat = getChatIfHeExist(messageRequest.getChatId());
-        Message message = new Message();
-        message.setTime(LocalDateTime.now());
-        message.setText(messageRequest.getText());
-        message.setUser(userDetails.getClient());
-        message.setChat(chat);
         chat.setLastModifiedTime(LocalDateTime.now());
         chatRepo.save(chat);
-        return getMessageResponse(messageRepo.save(message));
+        return getMessageResponse(messageRepo
+                .save(Message
+                        .builder()
+                        .time(LocalDateTime.now())
+                        .text(messageRequest.getText())
+                        .user(userDetails.getClient())
+                        .chat(chat)
+                        .build()));
     }
 
     public ChatResponse createChat(CustomUserDetails userDetails, ChatRequest chatRequest) {
-        Chat chat = new Chat();
-        chat.setStatus(ChatStatus.CREATED);
-        chat.setTopic(chatRequest.getTopic());
-        chat.setCreateUser(userDetails.getClient());
-        chat.setCreateTime(LocalDateTime.now());
-        chat.setLastModifiedTime(LocalDateTime.now());
-        return getChatResponse(chatRepo.save(chat));
+
+        return getChatResponse(chatRepo
+                .save(Chat
+                        .builder()
+                        .status(ChatStatus.CREATED)
+                        .topic(chatRequest.getTopic())
+                        .createUser(userDetails.getClient())
+                        .createTime(LocalDateTime.now())
+                        .lastModifiedTime(LocalDateTime.now())
+                        .build()));
     }
 
     public AnswerResponse deleteChat(Long chatId) {
@@ -102,8 +94,8 @@ public class ChatService {
     }
 
     public ChatResponse changeStatusChat(Long chatId, ChatStatusRequest chatStatusRequest) {
-        if(Arrays.toString(ChatStatus.values())
-                .contains(chatStatusRequest.getChatStatus().toString())){
+        if (Arrays.toString(ChatStatus.values())
+                .contains(chatStatusRequest.getChatStatus().toString())) {
             Chat chat = getChatIfHeExist(chatId);
             chat.setStatus(chatStatusRequest.getChatStatus());
             return getChatResponse(chatRepo.save(chat));
@@ -122,6 +114,19 @@ public class ChatService {
                 .build();
     }
 
+    private List<MessageResponse> getListMessageResponse(List<Message> messageList) {
+        return messageList
+                .stream()
+                .map(this::getMessageResponse)
+                .collect(Collectors.toList());
+    }
+
+    private List<ChatResponse> getListChatResponse(List<Chat> chatList) {
+        return chatList
+                .stream()
+                .map(this::getChatResponse)
+                .collect(Collectors.toList());
+    }
 
     private ChatResponse getChatResponse(Chat chat) {
         return ChatResponse

@@ -5,5 +5,5 @@ import lombok.Setter;
 @Setter
 public class PaymentURLResponse {
 
-    String paymentURL;
+    private String paymentURL;
 }

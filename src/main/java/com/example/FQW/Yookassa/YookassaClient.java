@@ -1,11 +1,8 @@
 package com.example.FQW.Yookassa;
 
 import com.example.FQW.ex.RequestException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +35,7 @@ public class YookassaClient {
                 throw new RequestException(HttpStatus.NOT_IMPLEMENTED, "Возникла проблема при выполнении запроса на создание платежа");
             }
         } catch (UnirestException e) {
-            throw new RequestException(HttpStatus.NOT_IMPLEMENTED, e.getMessage() + "Тут ошибка");
+            throw new RequestException(HttpStatus.NOT_IMPLEMENTED, e.getMessage());
         }
     }
 
@@ -58,17 +55,4 @@ public class YookassaClient {
             throw new RequestException(HttpStatus.NOT_IMPLEMENTED, e.getMessage());
         }
     }
-
-//    public void captureOrder (String id){
-//        try {
-//            Unirest
-//                    .post(APIEndpoint + "/payment"+ id + "/capture")
-//                    .header("Authorization", Client.authorization)
-//                    .header("Idempotence-Key", UUID.randomUUID().toString())
-//                    .header("Content-Type", "application/json")
-//                    .asJson();
-//        } catch (UnirestException e) {
-//            throw new RequestException(HttpStatus.NOT_IMPLEMENTED, e.getMessage());
-//        }
-//    }
 }

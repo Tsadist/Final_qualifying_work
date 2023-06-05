@@ -10,11 +10,12 @@ import java.util.List;
 public interface VacationRepo extends JpaRepository<Vacation, Long> {
 
     @Query(nativeQuery = true, value =
-            "SELECT DISTINCT vac.cleaner_id\n" +
-            "FROM vacation vac\n" +
-            "JOIN orders o on o.id = ?1\n" +
-            "WHERE vac.start_day < o.the_date\n" +
-            "AND vac.end_day > o.the_date;")
+            """
+                    SELECT DISTINCT vac.cleaner_id
+                    FROM vacation vac
+                    JOIN orders o on o.id = ?1
+                    WHERE vac.start_day < o.the_date
+                    AND vac.end_day > o.the_date;""")
     List<User> findAllCleanerByDateOrder(Long orderId);
 
     List<Vacation> getAllByCleanerId (Long cleanerId);

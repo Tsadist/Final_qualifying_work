@@ -24,13 +24,14 @@ public class AdditionServiceService {
 
     public List<AdditionServiceResponse> createAdditionService(List<AdditionServiceRequest> additionServiceRequest) {
         List<AdditionService> additionServiceList = new ArrayList<>();
-        additionServiceRequest.forEach(ASRequest -> {
-            AdditionService additionService = new AdditionService();
-            additionService.setCost(ASRequest.getCost());
-            additionService.setDuration(ASRequest.getDuration());
-            additionService.setTitle(ASRequest.getTitle());
-            additionServiceList.add(additionServiceRepo.save(additionService));
-        });
+        additionServiceRequest.forEach(ASRequest -> additionServiceList
+                .add(additionServiceRepo
+                        .save(AdditionService
+                                .builder()
+                                .cost(ASRequest.getCost())
+                                .duration(ASRequest.getDuration())
+                                .title(ASRequest.getTitle())
+                                .build())));
         return getAdditionServiceResponseList(additionServiceList);
     }
 

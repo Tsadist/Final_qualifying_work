@@ -10,5 +10,4 @@ public class ScheduleRequest {
 
     private int numberWeek;
     private HashMap<String, Schedule.ScheduleHours> objDays;
-
 }

@@ -2,16 +2,18 @@ package com.example.FQW.models.DB;
 
 import com.example.FQW.models.enums.ChatStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Setter
 @Getter
+@Setter
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "chat")
 public class Chat {
 

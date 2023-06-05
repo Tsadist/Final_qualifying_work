@@ -8,5 +8,4 @@ public class AdditionServiceRequest {
     private Integer cost;
     private Float duration;
     private String title;
-
 }

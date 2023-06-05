@@ -2,7 +2,6 @@ package com.example.FQW.models.response;
 
 import lombok.*;
 
-@Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor

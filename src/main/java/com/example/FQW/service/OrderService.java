@@ -9,7 +9,6 @@ import com.example.FQW.models.DB.User;
 import com.example.FQW.models.enums.CleaningType;
 import com.example.FQW.models.enums.OrderStatus;
 import com.example.FQW.models.enums.RoomType;
-import com.example.FQW.models.enums.UserRole;
 import com.example.FQW.models.request.OrderRequest;
 import com.example.FQW.models.response.AnswerResponse;
 import com.example.FQW.models.response.CleanerResponse;
@@ -27,7 +26,6 @@ import java.sql.Date;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -47,41 +45,36 @@ public class OrderService {
     public List<OrderResponse> getAllOrders(CustomUserDetails userDetails) {
         User user = userDetails.getClient();
         List<Order> orderList;
-        if (user.getUserRole() == UserRole.CUSTOMER) {
-            orderList = orderRepo.findAllByCustomerId(user.getId());
-        } else if (user.getUserRole() == UserRole.CLEANER) {
-            orderList = orderRepo.findAllByCleanerId(user.getId());
-        } else {
-            throw new RequestException(HttpStatus.UNAUTHORIZED, "У вас нет доступа к этому методу");
+        switch (user.getUserRole()) {
+            case CUSTOMER -> orderList = orderRepo.findAllByCustomerId(user.getId());
+            case CLEANER -> orderList = orderRepo.findAllByCleanerId(user.getId());
+            default -> throw new RequestException(HttpStatus.UNAUTHORIZED, "У вас нет доступа к этому методу");
         }
-        return orderList
-                .stream()
-                .map(this::getOrderResponse)
-                .collect(Collectors.toList());
+        return getListOrderResponse(orderList);
     }
 
     public OrderResponse createOrder(CustomUserDetails userDetails, OrderRequest orderRequest) {
         if (isCreateOrder(orderRequest)) {
-            Order order = new Order();
-            order.setCustomer(userDetails.getClient());
-            order.setArea(orderRequest.getArea());
-            order.setRoomType(orderRequest.getRoomType());
-            order.setCleaningType(orderRequest.getCleaningType());
-            order.setTheDate(orderRequest.getTheDate());
-            order.setStartTime(orderRequest.getStartTime());
-            order.setAdditionServicesId(orderRequest.getAdditionServicesId());
-
-            Order newOrder = orderRepo.save(order);
-            List<AdditionService> additionServiceList = additionServiceRepo.findAllById(List.of(order.getAdditionServicesId()));
+            Order newOrder = orderRepo
+                    .save(Order
+                            .builder()
+                            .customer(userDetails.getClient())
+                            .area(orderRequest.getArea())
+                            .roomType(orderRequest.getRoomType())
+                            .cleaningType(orderRequest.getCleaningType())
+                            .theDate(orderRequest.getTheDate())
+                            .startTime(orderRequest.getStartTime())
+                            .additionServicesId(orderRequest.getAdditionServicesId())
+                            .build());
+            List<AdditionService> additionServiceList = additionServiceRepo
+                    .findAllById(List.of(orderRequest.getAdditionServicesId()));
             calculateOrderDuration(newOrder, additionServiceList);
             employeeAppointment(newOrder);
             costCalculation(newOrder, additionServiceList);
-
             return getOrderResponse(newOrder);
         } else {
             throw new RequestException(HttpStatus.BAD_REQUEST, "Какой-то из параметров запроса нулевой или невалидный");
         }
-
     }
 
     public OrderResponse editOrder(CustomUserDetails userDetails, Long orderId, OrderRequest orderRequest) {
@@ -115,7 +108,7 @@ public class OrderService {
     public PaymentURLResponse getPaymentURL(Long orderId, CustomUserDetails userDetails) {
         Order order = getOrderIsItExistsFromUserDetails(userDetails, orderId);
         Payment payment = paymentService.getPaymentForOrderId(order);
-        if (payment == null){
+        if (payment == null) {
             payment = paymentService.createPayment(order);
         }
         PaymentURLResponse paymentURLResponse = new PaymentURLResponse();
@@ -147,6 +140,10 @@ public class OrderService {
                 .additionServicesId(order.getAdditionServicesId())
                 .orderStatus(order.getOrderStatus())
                 .build();
+    }
+
+    private List<OrderResponse> getListOrderResponse(List<Order> orderList) {
+        return orderList.stream().map(this::getOrderResponse).toList();
     }
 
     private void employeeAppointment(Order order) {
@@ -182,7 +179,7 @@ public class OrderService {
                 .stream()
                 .map(AdditionService::getDuration)
                 .toList();
-        for (Float durationAS: durationAdditionService) {
+        for (Float durationAS : durationAdditionService) {
             duration += durationAS;
         }
 
@@ -211,7 +208,7 @@ public class OrderService {
                 .map(AdditionService::getCost)
                 .toList();
 
-        for (Integer costAS: costAdditionService) {
+        for (Integer costAS : costAdditionService) {
             cost += costAS;
         }
 
@@ -271,7 +268,7 @@ public class OrderService {
     }
 
     private boolean isCorrectAdditionServices(Long[] additionServicesId) {
-        if (additionServicesId.length == 0){
+        if (additionServicesId.length == 0) {
             return true;
         }
         List<AdditionService> allAdditionServices = additionServiceRepo.findAll();

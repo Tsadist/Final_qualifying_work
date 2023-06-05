@@ -4,7 +4,6 @@ import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.Type;
 
 import java.util.HashMap;
@@ -13,15 +12,11 @@ import java.util.HashMap;
 @Setter
 @Entity
 @Table(name = "schedule")
-@ToString
 public class Schedule {
 
     @Id
-    @Column(name = "id", nullable = false)
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
-    private int numberWeek;
 
     @Getter
     @Setter
@@ -30,11 +25,9 @@ public class Schedule {
         private int endTime;
     }
 
+    private int numberWeek;
+
     @Type(JsonBinaryType.class)
-    @Column(
-            name = "obj_days",
-            columnDefinition = "jsonb"
-    )
     private HashMap<String, ScheduleHours> objDays;
 
     @ManyToOne

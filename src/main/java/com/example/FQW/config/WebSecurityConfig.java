@@ -2,7 +2,6 @@ package com.example.FQW.config;
 
 import com.example.FQW.config.security.JwtAuthEndpoint;
 import com.example.FQW.config.security.JwtTokenFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -22,10 +21,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableMethodSecurity
 public class WebSecurityConfig {
 
-    @Autowired
-    private JwtTokenFilter jwtTokenFilter;
-    @Autowired
-    private JwtAuthEndpoint jwtAuthEndpoint;
+    private final JwtTokenFilter jwtTokenFilter;
+    private final JwtAuthEndpoint jwtAuthEndpoint;
+
+    public WebSecurityConfig(JwtTokenFilter jwtTokenFilter, JwtAuthEndpoint jwtAuthEndpoint) {
+        this.jwtTokenFilter = jwtTokenFilter;
+        this.jwtAuthEndpoint = jwtAuthEndpoint;
+    }
 
     @Bean
     protected SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
@@ -54,16 +56,6 @@ public class WebSecurityConfig {
         source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
         return source;
     }
-
-//    @Bean
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(userService).passwordEncoder(createPasswordEncoder());
-//    }
-
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        UserDetails userDetails = User
-//    }
 
     @Bean
     public PasswordEncoder createPasswordEncoder(){

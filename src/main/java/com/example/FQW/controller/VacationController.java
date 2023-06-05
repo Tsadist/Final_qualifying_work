@@ -1,6 +1,7 @@
 package com.example.FQW.controller;
 
 import com.example.FQW.config.CustomUserDetails;
+import com.example.FQW.models.request.VacationRequest;
 import com.example.FQW.models.response.AnswerResponse;
 import com.example.FQW.models.response.VacationResponse;
 import com.example.FQW.service.VacationService;
@@ -33,9 +34,9 @@ public class VacationController {
     @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("/vacation/{cleanerId}/create")
     public ResponseEntity<VacationResponse> createVacation(@PathVariable Long cleanerId,
-                                                                 @RequestBody VacationResponse vacationResponse,
+                                                                 @RequestBody VacationRequest vacationRequest,
                                                                  @AuthenticationPrincipal CustomUserDetails userDetails) {
-        return ResponseEntity.ok(vacationService.createVacation(userDetails, cleanerId, vacationResponse));
+        return ResponseEntity.ok(vacationService.createVacation(userDetails, cleanerId, vacationRequest));
     }
 
     @PreAuthorize("hasRole('MANAGER')")

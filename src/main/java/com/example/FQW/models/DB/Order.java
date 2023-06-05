@@ -5,16 +5,17 @@ import com.example.FQW.models.enums.OrderStatus;
 import com.example.FQW.models.enums.RoomType;
 import io.hypersistence.utils.hibernate.type.array.LongArrayType;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Type;
 
 import java.sql.Date;
-import java.util.List;
 
 @Getter
 @Setter
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "orders")
 public class Order {
 

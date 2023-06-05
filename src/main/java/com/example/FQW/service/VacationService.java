@@ -3,6 +3,7 @@ package com.example.FQW.service;
 import com.example.FQW.config.CustomUserDetails;
 import com.example.FQW.ex.RequestException;
 import com.example.FQW.models.DB.Vacation;
+import com.example.FQW.models.request.VacationRequest;
 import com.example.FQW.models.response.AnswerResponse;
 import com.example.FQW.models.response.VacationResponse;
 import com.example.FQW.repository.VacationRepo;
@@ -30,13 +31,13 @@ public class VacationService {
         return getVacationResponse(vacations);
     }
 
-    public VacationResponse createVacation(CustomUserDetails userDetails, Long cleanerId, VacationResponse vacationResponse) {
-        if (isCorrectDate(vacationResponse.getStartDay()) && isCorrectDate(vacationResponse.getEndDay())) {
+    public VacationResponse createVacation(CustomUserDetails userDetails, Long cleanerId, VacationRequest vacationRequest) {
+        if (isCorrectDate(vacationRequest.getStartDay()) && isCorrectDate(vacationRequest.getEndDay())) {
             Vacation vacation = new Vacation();
             vacation.setCleanerId(cleanerId);
             vacation.setManagerId(userDetails.getClient().getId());
-            vacation.setStartDay(vacationResponse.getStartDay());
-            vacation.setEndDay(vacationResponse.getEndDay());
+            vacation.setStartDay(vacationRequest.getStartDay());
+            vacation.setEndDay(vacationRequest.getEndDay());
             return getResponse(vacationRepo.save(vacation));
         } else {
             throw new RequestException(HttpStatus.BAD_REQUEST, "Указаны неверные даты отпуска");
@@ -45,7 +46,6 @@ public class VacationService {
 
     public AnswerResponse deleteVacation(Long vacationId) {
         vacationRepo.deleteById(vacationId);
-
         if (vacationRepo.findById(vacationId).isEmpty()) {
             return new AnswerResponse("Запись об отпуске была успешно удалена");
         } else {

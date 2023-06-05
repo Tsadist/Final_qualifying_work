@@ -4,12 +4,9 @@ import com.example.FQW.models.enums.CleaningType;
 import com.example.FQW.models.enums.OrderStatus;
 import com.example.FQW.models.enums.RoomType;
 import lombok.Builder;
-import lombok.Getter;
 
 import java.sql.Date;
-import java.util.List;
 
-@Getter
 @Builder
 public class OrderResponse {
 
