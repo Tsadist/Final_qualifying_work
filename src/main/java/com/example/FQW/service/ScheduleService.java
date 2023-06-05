@@ -29,14 +29,6 @@ public class ScheduleService {
         return getScheduleResponses(schedules);
     }
 
-
-    //    private ScheduleResponse getScheduleResponse(Schedule schedule) {
-//        return ScheduleResponse.builder()
-//                .numberWeek(schedule.getNumberWeek())
-//                .objDays(schedule.getObjDays())
-//                .build();
-//    }
-
     public List<ScheduleResponse> createSchedule(CustomUserDetails userDetails, List<ScheduleRequest> scheduleRequests) {
         if (isNumberWeekAndHoursValid(scheduleRequests, COUNT_MONTH_WEEK)) {
             List<Schedule> scheduleList = new ArrayList<>();

@@ -2,9 +2,11 @@ package com.example.FQW.models.DB;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "addition_service")
 public class AdditionService {
 

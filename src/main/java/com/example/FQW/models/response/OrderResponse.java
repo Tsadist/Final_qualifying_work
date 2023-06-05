@@ -24,5 +24,4 @@ public class OrderResponse {
     private Float duration;
     private Long[] additionServicesId;
     private OrderStatus orderStatus;
-    private String paymentURL;
 }

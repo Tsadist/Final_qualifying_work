@@ -1,10 +1,10 @@
 package com.example.FQW.service;
 
-import com.example.FQW.Yookassa.YookassaModel;
 import com.example.FQW.config.CustomUserDetails;
 import com.example.FQW.ex.RequestException;
 import com.example.FQW.models.DB.AdditionService;
 import com.example.FQW.models.DB.Order;
+import com.example.FQW.models.DB.Payment;
 import com.example.FQW.models.DB.User;
 import com.example.FQW.models.enums.CleaningType;
 import com.example.FQW.models.enums.OrderStatus;
@@ -14,6 +14,7 @@ import com.example.FQW.models.request.OrderRequest;
 import com.example.FQW.models.response.AnswerResponse;
 import com.example.FQW.models.response.CleanerResponse;
 import com.example.FQW.models.response.OrderResponse;
+import com.example.FQW.models.response.PaymentURLResponse;
 import com.example.FQW.repository.AdditionServiceRepo;
 import com.example.FQW.repository.OrderRepo;
 import com.example.FQW.repository.ScheduledRepo;
@@ -39,7 +40,7 @@ public class OrderService {
     private final PaymentService paymentService;
 
     public OrderResponse getOrder(CustomUserDetails userDetails, Long orderId) {
-        Order order = returnOrderIsItExistsFromUserDetails(userDetails, orderId);
+        Order order = getOrderIsItExistsFromUserDetails(userDetails, orderId);
         return getOrderResponse(order);
     }
 
@@ -84,7 +85,7 @@ public class OrderService {
     }
 
     public OrderResponse editOrder(CustomUserDetails userDetails, Long orderId, OrderRequest orderRequest) {
-        Order order = returnOrderIsItExistsFromUserDetails(userDetails, orderId);
+        Order order = getOrderIsItExistsFromUserDetails(userDetails, orderId);
 
         if (isEditOrder(orderRequest)) {
             order.setCleaningType(orderRequest.getCleaningType());
@@ -101,7 +102,7 @@ public class OrderService {
     }
 
     public AnswerResponse deleteOrder(CustomUserDetails userDetails, Long orderId) {
-        Order order = returnOrderIsItExistsFromUserDetails(userDetails, orderId);
+        Order order = getOrderIsItExistsFromUserDetails(userDetails, orderId);
         orderRepo.delete(order);
 
         if (orderRepo.findById(orderId).isEmpty()) {
@@ -111,19 +112,22 @@ public class OrderService {
         }
     }
 
+    public PaymentURLResponse getPaymentURL(Long orderId, CustomUserDetails userDetails) {
+        Order order = getOrderIsItExistsFromUserDetails(userDetails, orderId);
+        Payment payment = paymentService.getPaymentForOrderId(order);
+        if (payment == null){
+            payment = paymentService.createPayment(order);
+        }
+        PaymentURLResponse paymentURLResponse = new PaymentURLResponse();
+        paymentURLResponse.setPaymentURL(payment.getLinkForPayment());
+        return paymentURLResponse;
+    }
+
     private OrderResponse getOrderResponse(Order order) {
         User cleaner = order.getCleaner();
-        String paymentStatus = paymentService
-                .getPaymentForOrderId(order)
-                .getStatusPayment();
-        String paymentURL = order.getPaymentUrl();
 
         if (cleaner == null) {
             cleaner = new User();
-        }
-
-        if (!paymentStatus.equals(YookassaModel.Status.waiting_for_capture.toString())) {
-            paymentURL = null;
         }
 
         return OrderResponse.builder()
@@ -142,7 +146,6 @@ public class OrderService {
                 .duration(order.getDuration())
                 .additionServicesId(order.getAdditionServicesId())
                 .orderStatus(order.getOrderStatus())
-                .paymentURL(paymentURL)
                 .build();
     }
 
@@ -188,14 +191,14 @@ public class OrderService {
 
     }
 
-    private Order returnOrderIsItExistsFromUserDetails(CustomUserDetails userDetails, Long orderId) {
+    private Order getOrderIsItExistsFromUserDetails(CustomUserDetails userDetails, Long orderId) {
         Supplier<RequestException> requestExceptionSupplier = () -> new RequestException(HttpStatus.FORBIDDEN, "Заказ с таким Id не найден");
 
         Order order = orderRepo
                 .findById(orderId)
                 .orElseThrow(requestExceptionSupplier);
 
-        if (order.getCustomer() != userDetails.getClient()) {
+        if (order.getCustomer() != userDetails.getClient() || order.getCleaner() != userDetails.getClient()) {
             throw requestExceptionSupplier.get();
         }
         return order;
@@ -213,9 +216,6 @@ public class OrderService {
         }
 
         order.setCost(cost);
-        order.setPaymentUrl(paymentService
-                .createPayment(cost, order, order.getCustomer().getEmail())
-                .getLinkForPayment());
         orderRepo.save(order);
     }
 
@@ -271,11 +271,14 @@ public class OrderService {
     }
 
     private boolean isCorrectAdditionServices(Long[] additionServicesId) {
+        if (additionServicesId.length == 0){
+            return true;
+        }
         List<AdditionService> allAdditionServices = additionServiceRepo.findAll();
-        List<Long> collect = allAdditionServices
+        List<Long> additionServiceId = allAdditionServices
                 .stream()
                 .map(AdditionService::getId)
                 .toList();
-        return collect.containsAll(List.of(additionServicesId));
+        return additionServiceId.containsAll(List.of(additionServicesId));
     }
 }

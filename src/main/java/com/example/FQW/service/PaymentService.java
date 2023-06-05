@@ -20,9 +20,11 @@ public class PaymentService {
     private final YookassaClient yookassaClient;
     private final PaymentRepo paymentRepo;
 
-    public Payment createPayment(Integer value, Order order, String emailCustomer) {
+    public Payment createPayment(Order order) {
 
-        YookassaModel requestModel = getYookassaModel(value, order.getId(), emailCustomer);
+        YookassaModel requestModel = getYookassaModel(order.getCost(),
+                order.getId(),
+                order.getCustomer().getEmail());
         YookassaModel responseModel = yookassaClient.create(requestModel);
 
         Payment payment = new Payment();
