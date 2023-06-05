@@ -156,6 +156,8 @@ public class OrderService {
                 .filter(cleaner -> !cleanersFromVacation.contains(cleaner))
                 .toList();
 
+
+
         if (!suitableCleaner.isEmpty()) {
             order.setCleaner(suitableCleaner.get(0));
             order.setOrderStatus(OrderStatus.WAITING_FOR_PAYMENT);

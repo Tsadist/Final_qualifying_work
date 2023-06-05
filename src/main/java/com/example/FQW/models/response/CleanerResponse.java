@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Builder
+@Getter
 public class CleanerResponse {
 
     private String phoneNumber;

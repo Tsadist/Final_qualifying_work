@@ -4,10 +4,12 @@ import com.example.FQW.models.enums.CleaningType;
 import com.example.FQW.models.enums.OrderStatus;
 import com.example.FQW.models.enums.RoomType;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.sql.Date;
 
 @Builder
+@Getter
 public class OrderResponse {
 
     private Long id;
