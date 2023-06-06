@@ -14,5 +14,6 @@ public class OrderRequest {
     private CleaningType cleaningType;
     private Date theDate;
     private Short startTime;
+    private String address;
     private Long[] additionServicesId;
 }

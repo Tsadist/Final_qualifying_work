@@ -37,6 +37,7 @@ public class Order {
     private Short startTime;
     private Float duration;
     private Integer cost;
+    private String address;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")

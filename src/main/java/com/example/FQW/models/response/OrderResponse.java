@@ -22,5 +22,6 @@ public class OrderResponse {
     private Integer cost;
     private Float duration;
     private Long[] additionServicesId;
+    private String address;
     private OrderStatus orderStatus;
 }

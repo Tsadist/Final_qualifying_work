@@ -23,9 +23,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -64,6 +64,7 @@ public class OrderService {
                             .cleaningType(orderRequest.getCleaningType())
                             .theDate(orderRequest.getTheDate())
                             .startTime(orderRequest.getStartTime())
+                            .address(orderRequest.getAddress())
                             .additionServicesId(orderRequest.getAdditionServicesId())
                             .build());
             List<AdditionService> additionServiceList = additionServiceRepo
@@ -86,9 +87,16 @@ public class OrderService {
             order.setRoomType(orderRequest.getRoomType());
             order.setTheDate(orderRequest.getTheDate());
             order.setStartTime(orderRequest.getStartTime());
+            order.setAddress(orderRequest.getAddress());
             order.setAdditionServicesId(orderRequest.getAdditionServicesId());
 
-            return getOrderResponse(orderRepo.save(order));
+            List<AdditionService> additionServiceList = additionServiceRepo
+                    .findAllById(List.of(orderRequest.getAdditionServicesId()));
+            calculateOrderDuration(order,additionServiceList);
+            costCalculation(order, additionServiceList);
+            employeeAppointment(order);
+
+            return getOrder(userDetails, orderId);
         } else {
             throw new RequestException(HttpStatus.BAD_REQUEST, "Все параметры запроса нулевые или невалидные");
         }
@@ -152,14 +160,23 @@ public class OrderService {
         List<User> cleanersFromVacation = vacationRepo
                 .findAllCleanerByDateOrder(order.getId());
 
-        List<User> suitableCleaner = cleanersFromSchedule.stream()
-                .filter(cleaner -> !cleanersFromVacation.contains(cleaner))
-                .toList();
+        cleanersFromSchedule.removeIf(cleanersFromVacation::contains);
 
+        List<Order> orderList = new ArrayList<>();
 
+        cleanersFromSchedule.forEach(cleaner ->
+                orderList.addAll(orderRepo
+                        .findAllByTheDateAndCleanerId(order.getTheDate(), cleaner.getId())));
 
-        if (!suitableCleaner.isEmpty()) {
-            order.setCleaner(suitableCleaner.get(0));
+        Set<User> cleaners =
+                orderList.stream()
+                        .filter(oldOrder -> order.getStartTime() > oldOrder.getStartTime() + oldOrder.getDuration() ||
+                                order.getStartTime() + order.getDuration() < oldOrder.getStartTime())
+                        .map(Order::getCleaner)
+                        .collect(Collectors.toSet());
+
+        if (!cleaners.isEmpty()) {
+            order.setCleaner(cleaners.iterator().next());
             order.setOrderStatus(OrderStatus.WAITING_FOR_PAYMENT);
         } else {
             order.setOrderStatus(OrderStatus.NO_EMPLOYEE);
@@ -197,7 +214,8 @@ public class OrderService {
                 .findById(orderId)
                 .orElseThrow(requestExceptionSupplier);
 
-        if (order.getCustomer() != userDetails.getClient() || order.getCleaner() != userDetails.getClient()) {
+        if (!Objects.equals(order.getCustomer().getId(), userDetails.getClient().getId())
+                && !Objects.equals(order.getCleaner().getId(), userDetails.getClient().getId())) {
             throw requestExceptionSupplier.get();
         }
         return order;
