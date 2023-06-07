@@ -124,6 +124,51 @@ public class OrderService {
         return paymentURLResponse;
     }
 
+    protected void employeeAppointment(Order order) {
+        employeeAppointment(order, null);
+    }
+
+    protected void employeeAppointment(Order order, User cleanerRemove) {
+        List<User> cleanersFromSchedule = scheduledRepo
+                .findAllCleanerFromDayOfWeekAndDuration(order.getId());
+        List<User> cleanersFromVacation = vacationRepo
+                .findAllCleanerByDateOrder(order.getId());
+
+        cleanersFromSchedule.removeIf(cleanersFromVacation::contains);
+
+        List<Order> orderList = new ArrayList<>();
+
+        cleanersFromSchedule.forEach(cleaner ->
+                orderList.addAll(orderRepo
+                        .findAllByTheDateAndCleanerId(order.getTheDate(), cleaner.getId())));
+
+        Set<User> cleaners =
+                orderList.stream()
+                        .filter(oldOrder -> order.getStartTime() > oldOrder.getStartTime() + oldOrder.getDuration() ||
+                                order.getStartTime() + order.getDuration() < oldOrder.getStartTime())
+                        .map(Order::getCleaner)
+                        .collect(Collectors.toSet());
+
+        cleaners.remove(cleanerRemove);
+
+        if (!cleaners.isEmpty()) {
+            order.setCleaner(cleaners.iterator().next());
+            order.setOrderStatus(OrderStatus.WAITING_FOR_PAYMENT);
+        } else {
+            order.setOrderStatus(OrderStatus.NO_EMPLOYEE);
+        }
+
+        orderRepo.save(order);
+    }
+
+    protected Order getOrder(Long orderId) {
+        Supplier<RequestException> requestExceptionSupplier = () -> new RequestException(HttpStatus.FORBIDDEN, "Заказ с таким Id не найден");
+
+        return orderRepo
+                .findById(orderId)
+                .orElseThrow(requestExceptionSupplier);
+    }
+
     private OrderResponse getOrderResponse(Order order) {
         User cleaner = order.getCleaner();
 
@@ -154,35 +199,13 @@ public class OrderService {
         return orderList.stream().map(this::getOrderResponse).toList();
     }
 
-    private void employeeAppointment(Order order) {
-        List<User> cleanersFromSchedule = scheduledRepo
-                .findAllCleanerFromDayOfWeekAndDuration(order.getId());
-        List<User> cleanersFromVacation = vacationRepo
-                .findAllCleanerByDateOrder(order.getId());
-
-        cleanersFromSchedule.removeIf(cleanersFromVacation::contains);
-
-        List<Order> orderList = new ArrayList<>();
-
-        cleanersFromSchedule.forEach(cleaner ->
-                orderList.addAll(orderRepo
-                        .findAllByTheDateAndCleanerId(order.getTheDate(), cleaner.getId())));
-
-        Set<User> cleaners =
-                orderList.stream()
-                        .filter(oldOrder -> order.getStartTime() > oldOrder.getStartTime() + oldOrder.getDuration() ||
-                                order.getStartTime() + order.getDuration() < oldOrder.getStartTime())
-                        .map(Order::getCleaner)
-                        .collect(Collectors.toSet());
-
-        if (!cleaners.isEmpty()) {
-            order.setCleaner(cleaners.iterator().next());
-            order.setOrderStatus(OrderStatus.WAITING_FOR_PAYMENT);
-        } else {
-            order.setOrderStatus(OrderStatus.NO_EMPLOYEE);
+    private Order getOrderIsItExistsFromUserDetails(CustomUserDetails userDetails, Long orderId) {
+        Order order = getOrder(orderId);
+        if (!Objects.equals(order.getCustomer().getId(), userDetails.getClient().getId())
+                && !Objects.equals(order.getCleaner().getId(), userDetails.getClient().getId())) {
+            throw new RequestException(HttpStatus.LOCKED, "У вас нет доступа к данному заказу");
         }
-
-        orderRepo.save(order);
+        return order;
     }
 
     private void calculateOrderDuration(Order order, List<AdditionService> additionServiceList) {
@@ -205,20 +228,6 @@ public class OrderService {
         order.setDuration(duration);
         orderRepo.save(order);
 
-    }
-
-    private Order getOrderIsItExistsFromUserDetails(CustomUserDetails userDetails, Long orderId) {
-        Supplier<RequestException> requestExceptionSupplier = () -> new RequestException(HttpStatus.FORBIDDEN, "Заказ с таким Id не найден");
-
-        Order order = orderRepo
-                .findById(orderId)
-                .orElseThrow(requestExceptionSupplier);
-
-        if (!Objects.equals(order.getCustomer().getId(), userDetails.getClient().getId())
-                && !Objects.equals(order.getCleaner().getId(), userDetails.getClient().getId())) {
-            throw requestExceptionSupplier.get();
-        }
-        return order;
     }
 
     private void costCalculation(Order order, List<AdditionService> additionServiceList) {

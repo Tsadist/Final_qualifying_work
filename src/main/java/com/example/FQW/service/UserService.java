@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 @Service
 @Slf4j
@@ -109,6 +110,14 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    protected User getUser(Long userId) {
+        Supplier<RequestException> requestExceptionSupplier = () -> new RequestException(HttpStatus.FORBIDDEN, "Пользователь с таким Id не найден");
+
+        return userRepo
+                .findById(userId)
+                .orElseThrow(requestExceptionSupplier);
+    }
+
     private UserResponse getUserResponse(User user) {
         return UserResponse
                 .builder()
@@ -138,13 +147,9 @@ public class UserService implements UserDetailsService {
     }
 
     private boolean isUserRoleBelongsEmployee(UserRole role) {
-        switch (role) {
-            case CLEANER:
-            case MANAGER:
-            case MODERATOR:
-                return true;
-            default:
-                throw new RequestException(HttpStatus.BAD_REQUEST, "Роль пользователя должна соответствовать роли сотрудника");
-        }
+        if (role == UserRole.CUSTOMER)
+            throw new RequestException(HttpStatus.BAD_REQUEST, "Роль пользователя должна соответствовать роли сотрудника");
+
+        return true;
     }
 }
