@@ -37,6 +37,7 @@ public class OrderService {
     private final AdditionServiceRepo additionServiceRepo;
     private final PaymentService paymentService;
     private final UserService userService;
+    private final CustomMailSender mailSender;
 
     public OrderResponse getOrder(CustomUserDetails userDetails, Long orderId) {
         Order order = getOrderIsItExistsFromUserDetails(userDetails, orderId);
@@ -156,7 +157,13 @@ public class OrderService {
         }
 
         if (!cleaners.isEmpty()) {
-            order.setCleaner(cleaners.iterator().next());
+            User cleaner = cleaners.iterator().next();
+            mailSender.send(cleaner.getEmail(), "Новый заказ", String
+                    .format("Вам назначен новый заказ. \nДата: %s \nВремя: %dч \nАдрес: %s",
+                            order.getTheDate(),
+                            order.getStartTime(),
+                            order.getAddress()));
+            order.setCleaner(cleaner);
             order.setOrderStatus(OrderStatus.WAITING_FOR_PAYMENT);
         } else {
             order.setOrderStatus(OrderStatus.NO_EMPLOYEE);

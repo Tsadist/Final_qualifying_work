@@ -52,12 +52,15 @@ public class CleanerApplicationService {
         switch (application.getStatus()) {
             case OK -> {
                 orderService.employeeAppointment(order, cleaner);
+                customMailSender.send(cleaner.getEmail(),
+                        "Заявка на отказ от заказа",
+                        String.format("Заявка на отказ от заказа № %d одобрена", order.getId()));
                 return new AnswerResponse("Статус заявки был изменен на OK");
             }
             case REJECTED -> {
                 customMailSender.send(cleaner.getEmail(),
                         "Заявка на отказ от заказа",
-                        String.format("Заявка на отказ от заказа № %d отклонен", order.getId()));
+                        String.format("Заявка на отказ от заказа № %d отклонена", order.getId()));
                 return new AnswerResponse("Статус заявки был изменен на REJECTED");
             }
                 default -> throw new RequestException(HttpStatus.NOT_IMPLEMENTED, "Статус заявки не был изменен");

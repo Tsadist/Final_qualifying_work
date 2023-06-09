@@ -27,7 +27,7 @@ import java.util.function.Supplier;
 public class UserService implements UserDetailsService {
 
     private final UserRepo userRepo;
-    private final CustomMailSender customMailSender;
+    private final CustomMailSender mailSender;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -94,7 +94,7 @@ public class UserService implements UserDetailsService {
             String message = String
                     .format("Для активации личного кабинета перейдите по ссылке: http://localhost:8080/registration/?t=%s",
                             activationCode);
-            customMailSender.send(registrationRequest.getEmail(), "Активация аккаунта", message);
+            mailSender.send(registrationRequest.getEmail(), "Активация аккаунта", message);
             return new AnswerResponse("Пользователь успешно создан, для входа в ЛК нужно подтвердить аккаунт");
 
         }
@@ -104,15 +104,19 @@ public class UserService implements UserDetailsService {
     public UserResponse createEmployee(NewEmployeeRequest newEmployeeRequest) {
         if (userRepo.findByEmail(newEmployeeRequest.getEmail()) == null
                 && isUserRoleBelongsEmployee(newEmployeeRequest.getUserRole())) {
-            User user = new User();
-            user.setPhoneNumber(newEmployeeRequest.getPhoneNumber());
-            user.setUserRole(newEmployeeRequest.getUserRole());
-            user.setEmail(newEmployeeRequest.getEmail());
-            user.setName(newEmployeeRequest.getName());
-            user.setSurname(newEmployeeRequest.getSurname());
-            user.setPassword(Randomizer.getRandomString());
-            user.setActive(true);
-            return getUserResponse(userRepo.save(user));
+            String password = Randomizer.getRandomString();
+            mailSender.send(newEmployeeRequest.getEmail(), "Данные для входа в личный кабинет", String
+                    .format("Пароль от вашего личного кабинета: %s", password));
+            return getUserResponse(userRepo.save(User
+                    .builder()
+                    .phoneNumber(newEmployeeRequest.getPhoneNumber())
+                    .userRole(newEmployeeRequest.getUserRole())
+                    .email(newEmployeeRequest.getEmail())
+                    .name(newEmployeeRequest.getName())
+                    .surname(newEmployeeRequest.getSurname())
+                    .password(password)
+                    .active(true)
+                    .build()));
         } else {
             throw new RequestException(HttpStatus.BAD_REQUEST, "Сотрудник с таким email уже существует");
         }
@@ -121,7 +125,7 @@ public class UserService implements UserDetailsService {
     public AnswerResponse accountActivate(ActivateCodeRequest activationCodeRequest) {
         User user = userRepo.findByActivationCode(activationCodeRequest.getActivationCode());
 
-        if (user == null){
+        if (user == null) {
             throw new RequestException(HttpStatus.NOT_FOUND, "Данный пользователь не регистировался");
         } else {
             user.setActivationCode(null);

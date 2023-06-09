@@ -62,7 +62,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserResponse(userDetails));
     }
 
-    @GetMapping("/activate")
+    @PostMapping("/activate")
     public ResponseEntity<AnswerResponse> activate(@RequestBody ActivateCodeRequest activationCodeRequest) {
         return ResponseEntity.ok(userService.accountActivate(activationCodeRequest));
     }
