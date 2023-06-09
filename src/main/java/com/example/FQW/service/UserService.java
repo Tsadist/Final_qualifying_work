@@ -5,10 +5,7 @@ import com.example.FQW.controller.utils.Randomizer;
 import com.example.FQW.ex.RequestException;
 import com.example.FQW.models.DB.User;
 import com.example.FQW.models.enums.UserRole;
-import com.example.FQW.models.request.AuthorizeRequest;
-import com.example.FQW.models.request.NewEmployeeRequest;
-import com.example.FQW.models.request.ProfileEditRequest;
-import com.example.FQW.models.request.RegistrationRequest;
+import com.example.FQW.models.request.*;
 import com.example.FQW.models.response.AnswerResponse;
 import com.example.FQW.models.response.UserResponse;
 import com.example.FQW.repository.UserRepo;
@@ -20,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -29,7 +27,7 @@ import java.util.function.Supplier;
 public class UserService implements UserDetailsService {
 
     private final UserRepo userRepo;
-    private final MailSender mailSender;
+    private final CustomMailSender customMailSender;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -42,20 +40,26 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public UserResponse getProfile(CustomUserDetails userDetails) {
+    public UserResponse getUserResponse(CustomUserDetails userDetails) {
         return getUserResponse(userDetails.getClient());
     }
 
-    public UserResponse editProfile(CustomUserDetails userDetails, ProfileEditRequest profileEditRequest) {
+    public List<UserResponse> getAllEmployee() {
+        return userRepo.findAllByUserRoleNot(UserRole.CUSTOMER).stream().map(this::getUserResponse).toList();
+    }
+
+    public UserResponse editUser(CustomUserDetails userDetails, ProfileEditRequest profileEditRequest) {
         User user = userDetails.getClient();
         String name = profileEditRequest.getName();
         String surname = profileEditRequest.getSurname();
         String phoneNumber = profileEditRequest.getPhoneNumber();
         if (name != null) {
             user.setName(name);
-        } else if (surname != null) {
+        }
+        if (surname != null) {
             user.setSurname(surname);
-        } else if (phoneNumber != null) {
+        }
+        if (phoneNumber != null) {
             user.setPhoneNumber(phoneNumber);
         }
         return getUserResponse(userRepo.save(user));
@@ -66,27 +70,31 @@ public class UserService implements UserDetailsService {
         String password = authorizeRequest.getPassword();
         String email = authorizeRequest.getEmail();
         if (password != null && isPasswordNew(user, password)) {
-            user.setName(password);
-        } else if (email != null && isEmailNew(user, email)) {
-            user.setSurname(email);
+            user.setPassword(password);
+        }
+        if (email != null && isEmailNew(user, email)) {
+            user.setEmail(email);
         }
         return getUserResponse(userRepo.save(user));
     }
 
     public AnswerResponse createCustomer(RegistrationRequest registrationRequest) {
         if (userRepo.findByEmail(registrationRequest.getEmail()) == null) {
-            String activationCode = "";
+            String activationCode = Randomizer.getRandomString(16);
 
-            User user = new User();
-            user.setUserRole(UserRole.CUSTOMER);
-            user.setEmail(registrationRequest.getEmail());
-            user.setPassword(registrationRequest.getPassword());
-            user.setPhoneNumber(registrationRequest.getPhoneNumber());
-            userRepo.save(user);
+            userRepo.save(User
+                    .builder()
+                    .userRole(UserRole.CUSTOMER)
+                    .email(registrationRequest.getEmail())
+                    .password(registrationRequest.getPassword())
+                    .activationCode(activationCode)
+                    .active(false)
+                    .build());
+
             String message = String
-                    .format("Для активации личного кабинета перейдите по ссылке: http://localhost:8020/activate/%s",
+                    .format("Для активации личного кабинета перейдите по ссылке: http://localhost:8080/registration/?t=%s",
                             activationCode);
-            mailSender.send(registrationRequest.getEmail(), "Активация аккаунта", message);
+            customMailSender.send(registrationRequest.getEmail(), "Активация аккаунта", message);
             return new AnswerResponse("Пользователь успешно создан, для входа в ЛК нужно подтвердить аккаунт");
 
         }
@@ -110,12 +118,30 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    public AnswerResponse accountActivate(ActivateCodeRequest activationCodeRequest) {
+        User user = userRepo.findByActivationCode(activationCodeRequest.getActivationCode());
+
+        if (user == null){
+            throw new RequestException(HttpStatus.NOT_FOUND, "Данный пользователь не регистировался");
+        } else {
+            user.setActivationCode(null);
+            user.setActive(true);
+            return new AnswerResponse("Аккаунт успешно активирован");
+        }
+
+    }
+
     protected User getUser(Long userId) {
         Supplier<RequestException> requestExceptionSupplier = () -> new RequestException(HttpStatus.FORBIDDEN, "Пользователь с таким Id не найден");
 
         return userRepo
                 .findById(userId)
                 .orElseThrow(requestExceptionSupplier);
+    }
+
+    protected List<User> getAllUser(List<Long> userIds) {
+        return userRepo
+                .findAllById(userIds);
     }
 
     private UserResponse getUserResponse(User user) {

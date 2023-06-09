@@ -16,8 +16,8 @@ public interface ScheduledRepo extends JpaRepository<Schedule, Long> {
                     WHERE o.start_time>= to_number(sc.obj_days #>>
                     cast('{' || extract(dow from o.the_date) || ',startTime}'AS text[]),'99')
                     AND o.start_time +o.duration <= to_number(sc.obj_days #>>
-                    cast('{'|| extract(dow from o.the_date) ||',endTime}'AS text[]), '99')""")
-    List<User> findAllCleanerFromDayOfWeekAndDuration(Long orderId);
+                    cast('{' || extract(dow from o.the_date) || ',endTime}'AS text[]), '99')""")
+    List<Long> findAllCleanerFromDayOfWeekAndDuration(Long orderId);
 
     List<Schedule> findAllByCleanerId(Long cleanerId);
 

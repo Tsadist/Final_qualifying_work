@@ -2,8 +2,7 @@ package com.example.FQW.models.DB;
 
 import com.example.FQW.models.enums.UserRole;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +11,9 @@ import java.util.Objects;
 @Setter
 @Getter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "usr")
 public class User {
 
@@ -24,6 +26,7 @@ public class User {
     private String email;
     private String name;
     private String surname;
+    private String activationCode;
 
     @Column(columnDefinition = "boolean default false not null")
     private boolean active;

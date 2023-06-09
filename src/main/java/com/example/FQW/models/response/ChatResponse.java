@@ -11,9 +11,13 @@ import java.time.LocalDateTime;
 @Getter
 public class ChatResponse {
 
+    private Long chatId;
     private String topic;
     private ChatStatus status;
     private LocalDateTime createTime;
     private LocalDateTime lastModifiedTime;
-    private User createUser;
+    private String name;
+    private String surname;
+    private String phoneNumber;
+    private String email;
 }

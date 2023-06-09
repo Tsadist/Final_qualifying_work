@@ -36,6 +36,7 @@ public class OrderService {
     private final VacationRepo vacationRepo;
     private final AdditionServiceRepo additionServiceRepo;
     private final PaymentService paymentService;
+    private final UserService userService;
 
     public OrderResponse getOrder(CustomUserDetails userDetails, Long orderId) {
         Order order = getOrderIsItExistsFromUserDetails(userDetails, orderId);
@@ -92,7 +93,7 @@ public class OrderService {
 
             List<AdditionService> additionServiceList = additionServiceRepo
                     .findAllById(List.of(orderRequest.getAdditionServicesId()));
-            calculateOrderDuration(order,additionServiceList);
+            calculateOrderDuration(order, additionServiceList);
             costCalculation(order, additionServiceList);
             employeeAppointment(order);
 
@@ -129,8 +130,9 @@ public class OrderService {
     }
 
     protected void employeeAppointment(Order order, User cleanerRemove) {
-        List<User> cleanersFromSchedule = scheduledRepo
+        List<Long> cleanerIds = scheduledRepo
                 .findAllCleanerFromDayOfWeekAndDuration(order.getId());
+        List<User> cleanersFromSchedule = userService.getAllUser(cleanerIds);
         List<User> cleanersFromVacation = vacationRepo
                 .findAllCleanerByDateOrder(order.getId());
 
@@ -149,7 +151,9 @@ public class OrderService {
                         .map(Order::getCleaner)
                         .collect(Collectors.toSet());
 
-        cleaners.remove(cleanerRemove);
+        if (cleanerRemove != null) {
+            cleaners.remove(cleanerRemove);
+        }
 
         if (!cleaners.isEmpty()) {
             order.setCleaner(cleaners.iterator().next());
@@ -227,7 +231,6 @@ public class OrderService {
 
         order.setDuration(duration);
         orderRepo.save(order);
-
     }
 
     private void costCalculation(Order order, List<AdditionService> additionServiceList) {

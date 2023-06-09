@@ -8,7 +8,6 @@ public class FQWApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(FQWApplication.class, args);
-
     }
 
 }

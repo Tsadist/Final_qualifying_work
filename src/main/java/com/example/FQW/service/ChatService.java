@@ -129,11 +129,16 @@ public class ChatService {
     }
 
     private ChatResponse getChatResponse(Chat chat) {
+        User user = chat.getCreateUser();
         return ChatResponse
                 .builder()
+                .chatId(chat.getId())
                 .status(chat.getStatus())
                 .topic(chat.getTopic())
-                .createUser(chat.getCreateUser())
+                .name(user.getName())
+                .surname(user.getSurname())
+                .phoneNumber(user.getPhoneNumber())
+                .email(user.getEmail())
                 .createTime(chat.getCreateTime())
                 .lastModifiedTime(chat.getLastModifiedTime())
                 .build();

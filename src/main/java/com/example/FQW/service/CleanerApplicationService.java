@@ -23,7 +23,7 @@ public class CleanerApplicationService {
     private final CleanerApplicationRepo applicationRepo;
     private final UserService userService;
     private final OrderService orderService;
-    private final MailSender mailSender;
+    private final CustomMailSender customMailSender;
 
     public List<CleanerApplicationResponse> getAllApplication() {
         List<CleanersApplication> applications = applicationRepo.findAllByStatus(CleanersApplication.Status.CREATED);
@@ -55,7 +55,7 @@ public class CleanerApplicationService {
                 return new AnswerResponse("Статус заявки был изменен на OK");
             }
             case REJECTED -> {
-                mailSender.send(cleaner.getEmail(),
+                customMailSender.send(cleaner.getEmail(),
                         "Заявка на отказ от заказа",
                         String.format("Заявка на отказ от заказа № %d отклонен", order.getId()));
                 return new AnswerResponse("Статус заявки был изменен на REJECTED");

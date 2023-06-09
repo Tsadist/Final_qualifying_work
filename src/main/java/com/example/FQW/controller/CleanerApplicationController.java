@@ -5,7 +5,6 @@ import com.example.FQW.models.request.CleanerApplicationRequest;
 import com.example.FQW.models.response.AnswerResponse;
 import com.example.FQW.models.response.CleanerApplicationResponse;
 import com.example.FQW.service.CleanerApplicationService;
-import jakarta.validation.constraints.DecimalMax;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

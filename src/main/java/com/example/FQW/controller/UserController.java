@@ -18,6 +18,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -55,18 +57,29 @@ public class UserController {
         return ResponseEntity.ok(loginResponse);
     }
 
-    @GetMapping("/profile")
-    public ResponseEntity<UserResponse> getProfile(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        return ResponseEntity.ok(userService.getProfile(userDetails));
+    @GetMapping("/user")
+    public ResponseEntity<UserResponse> getUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        return ResponseEntity.ok(userService.getUserResponse(userDetails));
     }
 
-    @PutMapping("/profile/edit")
-    public ResponseEntity<UserResponse> editProfile(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                    @RequestBody ProfileEditRequest profileEditRequest) {
-        return ResponseEntity.ok(userService.editProfile(userDetails, profileEditRequest));
+    @GetMapping("/activate")
+    public ResponseEntity<AnswerResponse> activate(@RequestBody ActivateCodeRequest activationCodeRequest) {
+        return ResponseEntity.ok(userService.accountActivate(activationCodeRequest));
     }
 
-    @PutMapping("/profile/authorize/edit")
+    @PreAuthorize("hasRole('MANAGER')")
+    @GetMapping("/user/all")
+    public ResponseEntity<List<UserResponse>> getUser() {
+        return ResponseEntity.ok(userService.getAllEmployee());
+    }
+
+    @PutMapping("/user/edit")
+    public ResponseEntity<UserResponse> editUser(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                 @RequestBody ProfileEditRequest profileEditRequest) {
+        return ResponseEntity.ok(userService.editUser(userDetails, profileEditRequest));
+    }
+
+    @PutMapping("/user/authorize/edit")
     public ResponseEntity<UserResponse> editAuthorizeDate(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                           @RequestBody AuthorizeRequest authorizeRequest) {
         return ResponseEntity.ok(userService.editAuthorizeDate(userDetails, authorizeRequest));
