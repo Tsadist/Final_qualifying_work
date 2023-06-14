@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 public class AdditionServiceResponse {
 
+    private Long id;
     private String title;
     private int cost;
     private float duration;

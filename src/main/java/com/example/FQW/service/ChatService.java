@@ -105,12 +105,15 @@ public class ChatService {
     }
 
     private MessageResponse getMessageResponse(Message message) {
+        User user = message.getUser();
         return MessageResponse
                 .builder()
                 .time(message.getTime())
                 .text(message.getText())
-                .userId(message.getUser())
-                .chatId(message.getChat())
+                .name(user.getName())
+                .surname(user.getSurname())
+                .userId(user.getId())
+                .chatId(message.getChat().getId())
                 .build();
     }
 

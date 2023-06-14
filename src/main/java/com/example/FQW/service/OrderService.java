@@ -106,10 +106,11 @@ public class OrderService {
 
     public AnswerResponse deleteOrder(CustomUserDetails userDetails, Long orderId) {
         Order order = getOrderIsItExistsFromUserDetails(userDetails, orderId);
+        String paymentAnswer = paymentService.delete(order).getMessage();
         orderRepo.delete(order);
 
         if (orderRepo.findById(orderId).isEmpty()) {
-            return new AnswerResponse("Заказ был успешно удален");
+            return new AnswerResponse("Заказ был успешно удален" + paymentAnswer);
         } else {
             throw new RequestException(HttpStatus.NOT_IMPLEMENTED, "Не удалось удалить заказ");
         }
@@ -137,20 +138,26 @@ public class OrderService {
         List<User> cleanersFromVacation = vacationRepo
                 .findAllCleanerByDateOrder(order.getId());
 
+
         cleanersFromSchedule.removeIf(cleanersFromVacation::contains);
 
         List<Order> orderList = new ArrayList<>();
+        Set<User> cleaners;
 
         cleanersFromSchedule.forEach(cleaner ->
                 orderList.addAll(orderRepo
                         .findAllByTheDateAndCleanerId(order.getTheDate(), cleaner.getId())));
 
-        Set<User> cleaners =
-                orderList.stream()
-                        .filter(oldOrder -> order.getStartTime() > oldOrder.getStartTime() + oldOrder.getDuration() ||
-                                order.getStartTime() + order.getDuration() < oldOrder.getStartTime())
-                        .map(Order::getCleaner)
-                        .collect(Collectors.toSet());
+        if (orderList.isEmpty()){
+            cleaners = new HashSet<>(cleanersFromSchedule);
+        } else {
+            cleaners =
+                    orderList.stream()
+                            .filter(oldOrder -> order.getStartTime() > oldOrder.getStartTime() + oldOrder.getDuration() ||
+                                    order.getStartTime() + order.getDuration() < oldOrder.getStartTime())
+                            .map(Order::getCleaner)
+                            .collect(Collectors.toSet());
+        }
 
         if (cleanerRemove != null) {
             cleaners.remove(cleanerRemove);
@@ -201,6 +208,7 @@ public class OrderService {
                         .build())
                 .cost(order.getCost())
                 .duration(order.getDuration())
+                .address(order.getAddress())
                 .additionServicesId(order.getAdditionServicesId())
                 .orderStatus(order.getOrderStatus())
                 .build();

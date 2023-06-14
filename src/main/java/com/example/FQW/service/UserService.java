@@ -18,7 +18,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 @Service
@@ -69,10 +68,8 @@ public class UserService implements UserDetailsService {
         User user = userDetails.getClient();
         String password = authorizeRequest.getPassword();
         String email = authorizeRequest.getEmail();
-        if (password != null && isPasswordNew(user, password)) {
+        if (password != null && email != null) {
             user.setPassword(password);
-        }
-        if (email != null && isEmailNew(user, email)) {
             user.setEmail(email);
         }
         return getUserResponse(userRepo.save(user));
@@ -158,22 +155,6 @@ public class UserService implements UserDetailsService {
                 .surname(user.getSurname())
                 .role(user.getUserRole())
                 .build();
-    }
-
-    private boolean isPasswordNew(User user, String password) {
-        if (!Objects.equals(user.getPassword(), password)) {
-            return true;
-        } else {
-            throw new RequestException(HttpStatus.BAD_REQUEST, "Новый пароль не может совпадать со старым");
-        }
-    }
-
-    private boolean isEmailNew(User user, String email) {
-        if (!Objects.equals(user.getEmail(), email)) {
-            return true;
-        } else {
-            throw new RequestException(HttpStatus.BAD_REQUEST, "Новая почта не может совпадать со старой");
-        }
     }
 
     private boolean isUserRoleBelongsEmployee(UserRole role) {

@@ -13,6 +13,8 @@ public class MessageResponse {
 
     private LocalDateTime time;
     private String text;
-    private User userId;
-    private Chat chatId;
+    private String name;
+    private String surname;
+    private Long userId;
+    private Long chatId;
 }

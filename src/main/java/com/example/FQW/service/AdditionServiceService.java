@@ -40,6 +40,7 @@ public class AdditionServiceService {
                 .stream()
                 .map(additionService -> AdditionServiceResponse
                         .builder()
+                        .id(additionService.getId())
                         .title(additionService.getTitle())
                         .cost(additionService.getCost())
                         .duration(additionService.getDuration())

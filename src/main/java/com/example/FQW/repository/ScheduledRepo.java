@@ -11,8 +11,8 @@ public interface ScheduledRepo extends JpaRepository<Schedule, Long> {
 
     @Query(nativeQuery = true, value =
             """
-                    SELECT DISTINCT sc.cleaner_id FROM schedule sc\s
-                    JOIN orders o on o.id =?1\s
+                    SELECT DISTINCT sc.cleaner_id FROM schedule sc
+                    JOIN orders o on o.id = ?1
                     WHERE o.start_time>= to_number(sc.obj_days #>>
                     cast('{' || extract(dow from o.the_date) || ',startTime}'AS text[]),'99')
                     AND o.start_time +o.duration <= to_number(sc.obj_days #>>
