@@ -55,31 +55,6 @@ public class OrderService {
         return getListOrderResponse(orderList);
     }
 
-    public OrderResponse createOrder(CustomUserDetails userDetails, OrderRequest orderRequest) {
-        if (isCreateOrder(orderRequest)) {
-            Order newOrder = orderRepo
-                    .save(Order
-                            .builder()
-                            .customer(userDetails.getClient())
-                            .area(orderRequest.getArea())
-                            .roomType(orderRequest.getRoomType())
-                            .cleaningType(orderRequest.getCleaningType())
-                            .theDate(orderRequest.getTheDate())
-                            .startTime(orderRequest.getStartTime())
-                            .address(orderRequest.getAddress())
-                            .additionServicesId(orderRequest.getAdditionServicesId())
-                            .build());
-            List<AdditionService> additionServiceList = additionServiceRepo
-                    .findAllById(List.of(orderRequest.getAdditionServicesId()));
-            calculateOrderDuration(newOrder, additionServiceList);
-            employeeAppointment(newOrder);
-            costCalculation(newOrder, additionServiceList);
-            return getOrderResponse(newOrder);
-        } else {
-            throw new RequestException(HttpStatus.BAD_REQUEST, "Какой-то из параметров запроса нулевой или невалидный");
-        }
-    }
-
     public OrderResponse editOrder(CustomUserDetails userDetails, Long orderId, OrderRequest orderRequest) {
         Order order = getOrderIsItExistsFromUserDetails(userDetails, orderId);
 
@@ -148,15 +123,14 @@ public class OrderService {
                 orderList.addAll(orderRepo
                         .findAllByTheDateAndCleanerId(order.getTheDate(), cleaner.getId())));
 
-        if (orderList.isEmpty()){
+        if (orderList.isEmpty()) {
             cleaners = new HashSet<>(cleanersFromSchedule);
         } else {
-            cleaners =
-                    orderList.stream()
-                            .filter(oldOrder -> order.getStartTime() > oldOrder.getStartTime() + oldOrder.getDuration() ||
-                                    order.getStartTime() + order.getDuration() < oldOrder.getStartTime())
-                            .map(Order::getCleaner)
-                            .collect(Collectors.toSet());
+            cleaners = orderList.stream()
+                    .filter(oldOrder -> order.getStartTime() > oldOrder.getStartTime() + oldOrder.getDuration() ||
+                            order.getStartTime() + order.getDuration() < oldOrder.getStartTime())
+                    .map(Order::getCleaner)
+                    .collect(Collectors.toSet());
         }
 
         if (cleanerRemove != null) {
@@ -187,7 +161,32 @@ public class OrderService {
                 .orElseThrow(requestExceptionSupplier);
     }
 
-    private OrderResponse getOrderResponse(Order order) {
+    public OrderResponse createOrder(CustomUserDetails userDetails, OrderRequest orderRequest) {
+        if (isCreateOrder(orderRequest)) {
+            Order newOrder = orderRepo
+                    .save(Order
+                            .builder()
+                            .customer(userDetails.getClient())
+                            .area(orderRequest.getArea())
+                            .roomType(orderRequest.getRoomType())
+                            .cleaningType(orderRequest.getCleaningType())
+                            .theDate(orderRequest.getTheDate())
+                            .startTime(orderRequest.getStartTime())
+                            .address(orderRequest.getAddress())
+                            .additionServicesId(orderRequest.getAdditionServicesId())
+                            .build());
+            List<AdditionService> additionServiceList = additionServiceRepo
+                    .findAllById(List.of(orderRequest.getAdditionServicesId()));
+            calculateOrderDuration(newOrder, additionServiceList);
+            employeeAppointment(newOrder);
+            costCalculation(newOrder, additionServiceList);
+            return getOrderResponse(newOrder);
+        } else {
+            throw new RequestException(HttpStatus.BAD_REQUEST, "Какой-то из параметров запроса нулевой или невалидный");
+        }
+    }
+
+    protected OrderResponse getOrderResponse(Order order) {
         User cleaner = order.getCleaner();
 
         if (cleaner == null) {

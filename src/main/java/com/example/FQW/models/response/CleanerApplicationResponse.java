@@ -10,7 +10,7 @@ public class CleanerApplicationResponse {
     private String nameCleaner;
     private String surnameCleaner;
     private String numberPhoneCleaner;
-    private Long orderId;
-    private Float durationOrder;
+    private String message;
+    private OrderResponse order;
 
 }

@@ -123,10 +123,11 @@ public class UserService implements UserDetailsService {
         User user = userRepo.findByActivationCode(activationCodeRequest.getActivationCode());
 
         if (user == null) {
-            throw new RequestException(HttpStatus.NOT_FOUND, "Данный пользователь не регистировался");
+            throw new RequestException(HttpStatus.NOT_FOUND, "Данный пользователь не регистрировался");
         } else {
             user.setActivationCode(null);
             user.setActive(true);
+            userRepo.save(user);
             return new AnswerResponse("Аккаунт успешно активирован");
         }
 

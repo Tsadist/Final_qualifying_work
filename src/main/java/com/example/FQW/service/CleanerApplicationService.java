@@ -81,8 +81,8 @@ public class CleanerApplicationService {
                 .nameCleaner(cleaner.getName())
                 .surnameCleaner(cleaner.getSurname())
                 .numberPhoneCleaner(cleaner.getPhoneNumber())
-                .orderId(order.getId())
-                .durationOrder(order.getDuration())
+                .message(application.getMessage())
+                .order(orderService.getOrderResponse(order))
                 .build();
     }
 }

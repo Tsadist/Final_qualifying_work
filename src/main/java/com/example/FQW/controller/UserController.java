@@ -25,10 +25,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserRepo userRepo;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenService jwtTokenService;
+    private final UserRepo userRepo;
 
     @PostMapping("/registration")
     public ResponseEntity<AnswerResponse> registration(@RequestBody RegistrationRequest registrationRequest) {
@@ -43,7 +43,6 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginClientRequest) {
-
         LoginResponse loginResponse = new LoginResponse();
 
         User user = userRepo.findByEmail(loginClientRequest.getEmail());

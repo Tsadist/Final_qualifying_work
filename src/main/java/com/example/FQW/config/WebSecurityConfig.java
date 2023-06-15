@@ -2,6 +2,7 @@ package com.example.FQW.config;
 
 import com.example.FQW.config.security.JwtAuthEndpoint;
 import com.example.FQW.config.security.JwtTokenFilter;
+import lombok.Setter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -20,6 +21,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@Setter
 public class WebSecurityConfig {
 
     private final JwtTokenFilter jwtTokenFilter;
@@ -50,6 +52,7 @@ public class WebSecurityConfig {
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
+
         http.headers().frameOptions().disable();
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -65,10 +68,5 @@ public class WebSecurityConfig {
         corsConfiguration.addAllowedMethod(HttpMethod.PUT);
         source.registerCorsConfiguration("/**", corsConfiguration);
         return source;
-    }
-
-    @Bean
-    public PasswordEncoder createPasswordEncoder(){
-        return NoOpPasswordEncoder.getInstance();
     }
 }
