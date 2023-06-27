@@ -55,6 +55,31 @@ public class OrderService {
         return getListOrderResponse(orderList);
     }
 
+    public OrderResponse createOrder(CustomUserDetails userDetails, OrderRequest orderRequest) {
+        if (isCreateOrder(orderRequest)) {
+            Order newOrder = orderRepo
+                    .save(Order
+                            .builder()
+                            .customer(userDetails.getClient())
+                            .area(orderRequest.getArea())
+                            .roomType(orderRequest.getRoomType())
+                            .cleaningType(orderRequest.getCleaningType())
+                            .theDate(orderRequest.getTheDate())
+                            .startTime(orderRequest.getStartTime())
+                            .address(orderRequest.getAddress())
+                            .additionServicesId(orderRequest.getAdditionServicesId())
+                            .build());
+            List<AdditionService> additionServiceList = additionServiceRepo
+                    .findAllById(List.of(orderRequest.getAdditionServicesId()));
+            calculateOrderDuration(newOrder, additionServiceList);
+            employeeAppointment(newOrder);
+            costCalculation(newOrder, additionServiceList);
+            return getOrderResponse(newOrder);
+        } else {
+            throw new RequestException(HttpStatus.BAD_REQUEST, "Какой-то из параметров запроса нулевой или невалидный");
+        }
+    }
+
     public OrderResponse editOrder(CustomUserDetails userDetails, Long orderId, OrderRequest orderRequest) {
         Order order = getOrderIsItExistsFromUserDetails(userDetails, orderId);
 
@@ -99,6 +124,7 @@ public class OrderService {
         }
         PaymentURLResponse paymentURLResponse = new PaymentURLResponse();
         paymentURLResponse.setPaymentURL(payment.getLinkForPayment());
+        order.setOrderStatus(OrderStatus.PAID);
         return paymentURLResponse;
     }
 
@@ -159,31 +185,6 @@ public class OrderService {
         return orderRepo
                 .findById(orderId)
                 .orElseThrow(requestExceptionSupplier);
-    }
-
-    public OrderResponse createOrder(CustomUserDetails userDetails, OrderRequest orderRequest) {
-        if (isCreateOrder(orderRequest)) {
-            Order newOrder = orderRepo
-                    .save(Order
-                            .builder()
-                            .customer(userDetails.getClient())
-                            .area(orderRequest.getArea())
-                            .roomType(orderRequest.getRoomType())
-                            .cleaningType(orderRequest.getCleaningType())
-                            .theDate(orderRequest.getTheDate())
-                            .startTime(orderRequest.getStartTime())
-                            .address(orderRequest.getAddress())
-                            .additionServicesId(orderRequest.getAdditionServicesId())
-                            .build());
-            List<AdditionService> additionServiceList = additionServiceRepo
-                    .findAllById(List.of(orderRequest.getAdditionServicesId()));
-            calculateOrderDuration(newOrder, additionServiceList);
-            employeeAppointment(newOrder);
-            costCalculation(newOrder, additionServiceList);
-            return getOrderResponse(newOrder);
-        } else {
-            throw new RequestException(HttpStatus.BAD_REQUEST, "Какой-то из параметров запроса нулевой или невалидный");
-        }
     }
 
     protected OrderResponse getOrderResponse(Order order) {

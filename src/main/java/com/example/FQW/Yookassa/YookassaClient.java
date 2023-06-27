@@ -38,21 +38,4 @@ public class YookassaClient {
             throw new RequestException(HttpStatus.NOT_IMPLEMENTED, e.getMessage());
         }
     }
-
-    public YookassaModel requestOrder(String id) {
-        try {
-            HttpResponse<YookassaModel> response = Unirest
-                    .get(APIEndpoint + "/payments" + id)
-                    .header("Content-Type", "application/json")
-                    .asObject(YookassaModel.class);
-
-            if (response.getStatus() == 200) {
-                return response.getBody();
-            } else {
-                throw new RequestException(HttpStatus.NOT_IMPLEMENTED, "Возникла проблема при выполнении запроса по получению информации о платеже");
-            }
-        } catch (UnirestException e) {
-            throw new RequestException(HttpStatus.NOT_IMPLEMENTED, e.getMessage());
-        }
-    }
 }
